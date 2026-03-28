@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description"
+        content="Global War Monitor 2026 — Tracking every major armed conflict worldwide with live data, maps, and humanitarian impact." />
+    <title>Global War Monitor 2026 | Active Conflicts Tracker</title>
+    <link rel="stylesheet" href="war-style.css" />
+</head>
+
+<body>
+
+    <!-- ══════════════════════════════════════════════════
+     CURSOR
+══════════════════════════════════════════════════ -->
+    <div id="cursor-dot"></div>
+    <div id="cursor-ring"></div>
+
+    <!-- ══════════════════════════════════════════════════
+     SCROLL PROGRESS
+══════════════════════════════════════════════════ -->
+    <div id="scroll-progress"></div>
+
+    <!-- ══════════════════════════════════════════════════
+     BREAKING NEWS TICKER
+══════════════════════════════════════════════════ -->
+    <div id="ticker-bar">
+        <div id="ticker-label">⚡ BREAKING</div>
+        <div id="ticker-track">
+            <span>Russia–Ukraine war enters 4th year — front lines largely static in Donbas</span>
+            <span>Sudan: RSF accused of massacre in El-Fasher — UN demands investigation</span>
+            <span>Gaza ceasefire negotiations stalled — humanitarian blockade ongoing</span>
+            <span>ACLED: 240,000+ conflict deaths recorded in past 12 months globally</span>
+            <span>Myanmar junta loses control of key border towns — resistance forces advance</span>
+            <span>DRC: M23 offensive paused — peace talks resume in Nairobi</span>
+            <span>UN refugee agency: 46 million newly displaced in 2025 — record high</span>
+            <span>Yemen Houthis continue Red Sea attacks — international coalition responds</span>
+            <span>46 active armed conflicts worldwide — highest count since World War II</span>
+            <span>Somalia: Al-Shabaab launches offensive in central regions</span>
+        </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════
+     MAIN NAV
+══════════════════════════════════════════════════ -->
+    <nav id="main-nav">
+        <div class="nav-brand">
+            <div class="nav-brand-icon"><span>⊕</span></div>
+            <div>
+                <h1>GLOBAL WAR MONITOR</h1>
+                <p>CONFLICT INTELLIGENCE PLATFORM · 2026</p>
+            </div>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#hero">Overview</a></li>
+            <li><a href="#map-section">World Map</a></li>
+            <li><a href="#conflicts">Conflicts</a></li>
+            <li><a href="#data-section">Data</a></li>
+            <li><a href="#timeline-section">Timeline</a></li>
+            <li><a href="#humanitarian">Humanitarian</a></li>
+            <li><a href="#resources">Resources</a></li>
+        </ul>
+        <div class="nav-right">
+            <div id="live-dot"></div>
+            <span id="live-label">LIVE</span>
+            <button id="music-btn" title="Toggle ambient audio" aria-label="Toggle ambient music">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round">
+                    <path d="M9 18V5l12-2v13" />
+                    <circle cx="6" cy="18" r="3" />
+                    <circle cx="18" cy="16" r="3" />
+                </svg>
+            </button>
+            <button id="hamburger" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu">
+        <a href="#hero">Overview</a>
+        <a href="#map-section">World Map</a>
+        <a href="#conflicts">Conflicts</a>
+        <a href="#data-section">Data</a>
+        <a href="#timeline-section">Timeline</a>
+        <a href="#humanitarian">Humanitarian</a>
+        <a href="#resources">Resources</a>
+    </div>
+
+
+    <!-- ╔══════════════════════════════════════════════════════╗
+     ║  SECTION 1 — HERO                                  ║
+     ╚══════════════════════════════════════════════════════╝ -->
+    <section id="hero">
+        <canvas id="hero-canvas"></canvas>
+        <div id="hero-grid"></div>
+        <div id="hero-vignette"></div>
+        <div class="hero-inner">
+            <div class="hero-eyebrow">Armed Conflict Intelligence · March 2026</div>
+            <h1 class="hero-title">WORLD AT <span>WAR</span></h1>
+            <p class="hero-sub">
+                As of March 2026, the world is experiencing its highest number of concurrent armed conflicts
+                since World War II. Over 240,000 people died from political violence in the past twelve months.
+                Millions more are displaced. This platform tracks every major conflict with verified data.
+            </p>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="hero-stat-num" data-target="46" data-suffix="">0</div>
+                    <div class="hero-stat-label">Active Conflicts</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-num" data-target="240,000" data-suffix="+">0</div>
+                    <div class="hero-stat-label">Deaths / 12 Months</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-num" data-target="46" data-suffix="M+">0</div>
+                    <div class="hero-stat-label">Newly Displaced (2025)</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-num" data-target="76" data-suffix="">0</div>
+                    <div class="hero-stat-label">Countries Affected</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ╔══════════════════════════════════════════════════════╗
+     ║  SECTION 2 — INTERACTIVE WORLD MAP                 ║
+     ╚══════════════════════════════════════════════════════╝ -->
+    <section id="map-section">
+        <div class="section-inner">
+            <div class="section-header reveal">
+                <div class="section-tag">Live Conflict Map</div>
+                <h2 class="section-title">GLOBAL CONFLICT HOTSPOTS</h2>
+                <p class="section-sub">
+                    Major armed conflicts as of Q1 2026. Circle size indicates relative severity.
+                    Hover pins for details. Click to jump to conflict profile.
+                    Data: ACLED · Uppsala Conflict Data Program.
+                </p>
+            </div>
+            <div id="map-wrap">
+                <!-- Simplified SVG World Map with conflict pins -->
+                <svg id="world-map-svg" viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <radialGradient id="mapbg" cx="50%" cy="50%" r="70%">
+                            <stop offset="0%" stop-color="#141618" />
+                            <stop offset="100%" stop-color="#0f1114" />
+                        </radialGradient>
+                        <filter id="mapglow">
+                            <feGaussianBlur stdDeviation="2" result="b" />
+                            <feMerge>
+                                <feMergeNode in="b" />
+                                <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    <rect width="1000" height="500" fill="url(#mapbg)" />
+                    <!-- Grid lines -->
+                    <g stroke="rgba(255,255,255,.04)" stroke-width=".5">
+                        <line x1="0" y1="125" x2="1000" y2="125" />
+                        <line x1="0" y1="250" x2="1000" y2="250" />
+                        <line x1="0" y1="375" x2="1000" y2="375" />
+                        <line x1="250" y1="0" x2="250" y2="500" />
+                        <line x1="500" y1="0" x2="500" y2="500" />
+                        <line x1="750" y1="0" x2="750" y2="500" />
+                    </g>
+                    <!-- Equator -->
+                    <line x1="0" y1="260" x2="1000" y2="260" stroke="rgba(255,255,255,.07)" stroke-width=".8"
+                        stroke-dasharray="4,6" />
+
+                    <!-- === SIMPLIFIED CONTINENT OUTLINES === -->
+                    <!-- North America -->
+                    <path
+                        d="M95,60 L180,55 L220,80 L235,110 L225,145 L210,170 L195,195 L180,210 L165,230 L150,255 L135,260 L125,250 L115,235 L110,215 L100,195 L90,175 L85,155 L80,135 L78,115 L82,90 Z"
+                        fill="rgba(30,35,40,.7)" stroke="rgba(255,255,255,.1)" stroke-width=".6" />
+                    <!-- Greenland -->
+                    <path d="M195,18 L230,15 L250,28 L248,48 L230,55 L205,50 L192,38 Z" fill="rgba(25,30,35,.7)"
+                        stroke="rgba(255,255,255,.08)" stroke-width=".5" />
+                    <!-- Central America / Caribbean -->
+                    <path d="M165,230 L180,245 L195,255 L195,265 L185,270 L175,265 L165,255 L158,240 Z"
+                        fill="rgba(30,35,40,.7)" stroke="rgba(255,255,255,.08)" stroke-width=".5" />
+                    <!-- South America -->
+                    <path
+                        d="M195,265 L220,260 L250,265 L270,285 L280,310 L285,340 L280,370 L270,395 L255,415 L240,425 L225,418 L215,400 L205,375 L198,350 L192,320 L188,295 Z"
+                        fill="rgba(30,35,40,.7)" stroke="rgba(255,255,255,.1)" stroke-width=".6" />
+                    <!-- Europe -->
+                    <path
+                        d="M430,60 L480,55 L510,65 L525,80 L520,100 L505,115 L490,120 L475,118 L460,125 L450,130 L440,125 L430,115 L425,100 L425,80 Z"
+                        fill="rgba(30,35,40,.7)" stroke="rgba(255,255,255,.1)" stroke-width=".6" />
+                    <!-- Scandinavia -->
+                    <path d="M465,25 L490,20 L505,35 L500,55 L480,60 L463,55 L458,40 Z" fill="rgba(30,35,40,.7)"
+                        stroke="rgba(255,255,255,.08)" stroke-width=".5" />
+                    <!-- UK / Ireland -->
+                    <path d="M415,70 L430,65 L435,75 L430,85 L418,88 L412,80 Z" fill="rgba(30,35,40,.7)"
+                        stroke="rgba(255,255,255,.08)" stroke-width=".5" />
+                    <!-- Africa -->
+                    <path
+                        d="M445,130 L510,120 L540,130 L555,155 L560,185 L565,215 L560,245 L550,270 L535,295 L515,315 L495,328 L475,330 L455,320 L438,300 L428,275 L422,245 L420,215 L422,185 L428,158 L435,140 Z"
+                        fill="rgba(30,35,40,.7)" stroke="rgba(255,255,255,.1)" stroke-width=".6" />
+                    <!-- Middle East -->
+                    <path d="M525,115 L570,110 L590,125 L600,145 L595,165 L575,175 L555,170 L540,155 L530,140 Z"
+                        fill="rgba(30,35,40,.7)" stroke="rgba(255,255,255,.08)" stroke-width=".5" />
+                    <!-- Central/South Asia -->
+                    <path
+                        d="M590,100 L650,95 L690,105 L710,120 L715,145 L700,165 L675,175 L650,178 L625,172 L605,160 L590,145 L582,125 Z"
+                        fill="rgba(30,35,40,.7)" stroke="rgba(255,255,255,.08)" stroke-width=".5" />
+                    <!-- Russia / Eurasia -->
+                    <path
+                        d="M510,28 L620,15 L730,20 L820,35 L870,55 L875,80 L840,95 L780,100 L720,95 L660,90 L600,88 L545,82 L510,70 L505,50 Z"
+                        fill="rgba(30,35,40,.7)" stroke="rgba(255,255,255,.1)" stroke-width=".6" />
+                    <!-- East/SE Asia -->
+                    <path
+                        d="M730,80 L810,75 L850,90 L870,115 L865,140 L845,155 L815,160 L790,155 L770,145 L750,130 L735,115 L725,100 Z"
+                        fill="rgba(30,35,40,.7)" stroke="rgba(255,255,255,.1)" stroke-width=".6" />
+                    <!-- SE Asia peninsula -->
+                    <path d="M720,155 L750,150 L765,170 L760,195 L740,210 L720,205 L710,185 Z" fill="rgba(30,35,40,.7)"
+                        stroke="rgba(255,255,255,.08)" stroke-width=".5" />
+                    <!-- Australia -->
+                    <path
+                        d="M780,310 L845,302 L890,315 L910,340 L905,370 L885,390 L855,400 L820,398 L790,385 L770,365 L765,340 Z"
+                        fill="rgba(30,35,40,.7)" stroke="rgba(255,255,255,.08)" stroke-width=".5" />
+                    <!-- Japan -->
+                    <path d="M855,100 L870,92 L882,104 L878,118 L862,122 L850,112 Z" fill="rgba(30,35,40,.7)"
+                        stroke="rgba(255,255,255,.07)" stroke-width=".5" />
+
+                    <!-- ====== CONFLICT PINS ====== -->
+                    <!-- Ukraine  cx~530 cy~90 -->
+                    <g class="conflict-pin" data-name="Ukraine–Russia War"
+                        data-info="Full-scale invasion since Feb 2022. 500,000+ casualties. Front lines in Donbas and Zaporizhzhia. Largest European war since WWII."
+                        transform="translate(530,90)">
+                        <circle class="ring" cx="0" cy="0" r="8" stroke="#c0392b" opacity=".7" />
+                        <circle cx="0" cy="0" r="7" fill="rgba(192,57,43,.35)" />
+                        <circle cx="0" cy="0" r="4" fill="#e74c3c" />
+                    </g>
+                    <!-- Gaza  cx~565 cy~148 -->
+                    <g class="conflict-pin" data-name="Gaza / Middle East War"
+                        data-info="Escalated Oct 7 2023. 21,417+ killed (ACLED, 2024-25). Multi-front conflict: Gaza, Lebanon, Yemen, Iran. UN calls humanitarian situation catastrophic."
+                        transform="translate(565,148)">
+                        <circle class="ring" cx="0" cy="0" r="8" stroke="#c0392b" opacity=".7" />
+                        <circle cx="0" cy="0" r="6" fill="rgba(192,57,43,.35)" />
+                        <circle cx="0" cy="0" r="3.5" fill="#e74c3c" />
+                    </g>
+                    <!-- Sudan  cx~510 cy~210 -->
+                    <g class="conflict-pin" data-name="Sudan Civil War"
+                        data-info="SAF vs RSF since April 2023. 20,373 killed (ACLED). 10M+ displaced. Famine in Darfur. Described as world's worst humanitarian crisis."
+                        transform="translate(510,210)">
+                        <circle class="ring" cx="0" cy="0" r="8" stroke="#d4820a" opacity=".7" />
+                        <circle cx="0" cy="0" r="6" fill="rgba(212,130,10,.3)" />
+                        <circle cx="0" cy="0" r="3.5" fill="#f39c12" />
+                    </g>
+                    <!-- Myanmar  cx~720 cy~175 -->
+                    <g class="conflict-pin" data-name="Myanmar Civil War"
+                        data-info="Military coup 2021 reignited civil war. 15,420+ casualties (2024-25). 1,200+ armed groups. Resistance forces control key border areas."
+                        transform="translate(722,175)">
+                        <circle class="ring" cx="0" cy="0" r="7" stroke="#d4820a" opacity=".7" />
+                        <circle cx="0" cy="0" r="5.5" fill="rgba(212,130,10,.3)" />
+                        <circle cx="0" cy="0" r="3" fill="#f39c12" />
+                    </g>
+                    <!-- DRC  cx~490 cy~255 -->
+                    <g class="conflict-pin" data-name="DR Congo (DRC) Conflict"
+                        data-info="M23 offensive backed by Rwanda. Mineral-driven conflict in eastern DRC. 7M+ displaced. One of the world's longest-running crises."
+                        transform="translate(490,255)">
+                        <circle class="ring" cx="0" cy="0" r="6" stroke="#2980b9" opacity=".7" />
+                        <circle cx="0" cy="0" r="5" fill="rgba(41,128,185,.25)" />
+                        <circle cx="0" cy="0" r="3" fill="#3498db" />
+                    </g>
+                    <!-- Somalia  cx~555 cy~228 -->
+                    <g class="conflict-pin" data-name="Somalia — Al-Shabaab"
+                        data-info="Al-Shabaab insurgency continues despite AU mission. Ongoing conflict since 2006. Civilian casualties and displacement persist across southern regions."
+                        transform="translate(558,230)">
+                        <circle class="ring" cx="0" cy="0" r="5" stroke="#2980b9" opacity=".6" />
+                        <circle cx="0" cy="0" r="4" fill="rgba(41,128,185,.2)" />
+                        <circle cx="0" cy="0" r="2.5" fill="#3498db" />
+                    </g>
+                    <!-- Yemen  cx~580 cy~185 -->
+                    <g class="conflict-pin" data-name="Yemen — Houthi Conflict"
+                        data-info="Houthi forces control northern Yemen. Red Sea shipping attacks since Oct 2023. World's worst humanitarian emergency. Saudi-led coalition involved."
+                        transform="translate(582,185)">
+                        <circle class="ring" cx="0" cy="0" r="5.5" stroke="#c0392b" opacity=".6" />
+                        <circle cx="0" cy="0" r="4.5" fill="rgba(192,57,43,.25)" />
+                        <circle cx="0" cy="0" r="2.5" fill="#e74c3c" />
+                    </g>
+                    <!-- Ethiopia  cx~542 cy~220 -->
+                    <g class="conflict-pin" data-name="Ethiopia — Tigray & Regional"
+                        data-info="Despite 2022 peace deal, conflict persists in Amhara and Oromia. Millions remain displaced. Humanitarian access restricted in key regions."
+                        transform="translate(542,218)">
+                        <circle class="ring" cx="0" cy="0" r="5" stroke="#5d6d7e" opacity=".6" />
+                        <circle cx="0" cy="0" r="4" fill="rgba(93,109,126,.2)" />
+                        <circle cx="0" cy="0" r="2.5" fill="#7f8c8d" />
+                    </g>
+                    <!-- Nigeria  cx~458 cy~205 -->
+                    <g class="conflict-pin" data-name="Nigeria — Boko Haram & Bandits"
+                        data-info="Multi-front conflict: Boko Haram/ISWAP in NE, bandit insurgency in NW, separatist tension in SE. 40,000+ killed since 2009. 3M+ displaced."
+                        transform="translate(458,205)">
+                        <circle class="ring" cx="0" cy="0" r="5.5" stroke="#5d6d7e" opacity=".6" />
+                        <circle cx="0" cy="0" r="4" fill="rgba(93,109,126,.2)" />
+                        <circle cx="0" cy="0" r="2.5" fill="#7f8c8d" />
+                    </g>
+                    <!-- Afghanistan  cx~635 cy~128 -->
+                    <g class="conflict-pin" data-name="Afghanistan — Taliban & ISKP"
+                        data-info="Taliban controls Kabul since 2021. Ongoing ISKP attacks. 768 conflict deaths in 2024. Women's rights decimated. Humanitarian crisis persists."
+                        transform="translate(635,130)">
+                        <circle class="ring" cx="0" cy="0" r="5" stroke="#5d6d7e" opacity=".6" />
+                        <circle cx="0" cy="0" r="4" fill="rgba(93,109,126,.2)" />
+                        <circle cx="0" cy="0" r="2.5" fill="#7f8c8d" />
+                    </g>
+                    <!-- Mexico  cx~148 cy~198 -->
+                    <g class="conflict-pin" data-name="Mexico — Cartel Wars"
+                        data-info="Sinaloa and CJNG cartels wage hyper-violent war. Thousands of civilian casualties annually. Fuelling a complex government-vs-cartel insurgency."
+                        transform="translate(148,198)">
+                        <circle class="ring" cx="0" cy="0" r="5" stroke="#2980b9" opacity=".6" />
+                        <circle cx="0" cy="0" r="4" fill="rgba(41,128,185,.2)" />
+                        <circle cx="0" cy="0" r="2.5" fill="#3498db" />
+                    </g>
+                    <!-- Syria  cx~548 cy~128 -->
+                    <g class="conflict-pin" data-name="Syria — Post-Assad Conflict"
+                        data-info="Assad fell Dec 2024. Fighting continues between factions. 6,000-9,000 deaths in past year. ISIS resurging in central regions. Kurdish forces under pressure."
+                        transform="translate(548,128)">
+                        <circle class="ring" cx="0" cy="0" r="5.5" stroke="#d4820a" opacity=".6" />
+                        <circle cx="0" cy="0" r="4" fill="rgba(212,130,10,.2)" />
+                        <circle cx="0" cy="0" r="2.5" fill="#f39c12" />
+                    </g>
+
+                    <!-- Map labels -->
+                    <text x="110" y="490" font-family="IBM Plex Mono" font-size="7" fill="rgba(255,255,255,.2)"
+                        letter-spacing="1">NORTH AMERICA</text>
+                    <text x="215" y="360" font-family="IBM Plex Mono" font-size="7" fill="rgba(255,255,255,.2)"
+                        letter-spacing="1">S. AMERICA</text>
+                    <text x="460" y="490" font-family="IBM Plex Mono" font-size="7" fill="rgba(255,255,255,.2)"
+                        letter-spacing="1">AFRICA</text>
+                    <text x="455" y="85" font-family="IBM Plex Mono" font-size="7" fill="rgba(255,255,255,.2)"
+                        letter-spacing="1">EUROPE</text>
+                    <text x="560" y="85" font-family="IBM Plex Mono" font-size="7" fill="rgba(255,255,255,.2)"
+                        letter-spacing="1">RUSSIA</text>
+                    <text x="630" y="165" font-family="IBM Plex Mono" font-size="7" fill="rgba(255,255,255,.2)"
+                        letter-spacing="1">SOUTH ASIA</text>
+                    <text x="760" y="130" font-family="IBM Plex Mono" font-size="7" fill="rgba(255,255,255,.2)"
+                        letter-spacing="1">EAST ASIA</text>
+                    <text x="800" y="370" font-family="IBM Plex Mono" font-size="7" fill="rgba(255,255,255,.2)"
+                        letter-spacing="1">AUSTRALIA</text>
+                </svg>
+
+                <div id="map-tooltip">
+                    <h4></h4>
+                    <p></p>
+                </div>
+
+                <!-- Legend -->
+                <div class="map-legend">
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background:#e74c3c;box-shadow:0 0 8px rgba(231,76,60,.5)"></div>
+                        Critical (10,000+ deaths/yr)
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background:#f39c12"></div>
+                        High Severity (5,000–10,000)
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background:#3498db"></div>
+                        Medium Severity (1,000–5,000)
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background:#7f8c8d"></div>
+                        Lower Intensity / Insurgency
+                    </div>
+                    <div class="legend-item" style="margin-left:auto">
+                        <em style="font-size:.5rem;color:var(--text-dim)">Sources: ACLED · ICG · Uppsala Conflict Data
+                            Program</em>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ╔══════════════════════════════════════════════════════╗
+     ║  SECTION 3 — CONFLICT CARDS                        ║
+     ╚══════════════════════════════════════════════════════╝ -->
+    <section id="conflicts">
+        <div class="section-inner">
+            <div class="section-header reveal">
+                <div class="section-tag">Active Conflicts Database</div>
+                <h2 class="section-title">CONFLICT PROFILES</h2>
+                <p class="section-sub">
+                    Detailed profiles of the world's 12 most significant armed conflicts.
+                    Filter by type or severity. Search by name.
+                </p>
+            </div>
+
+            <!-- Filter bar -->
+            <div class="filter-bar reveal">
+                <button class="filter-btn active" data-filter="all">All Conflicts</button>
+                <button class="filter-btn" data-filter="interstate">Interstate</button>
+                <button class="filter-btn" data-filter="civil">Civil War</button>
+                <button class="filter-btn" data-filter="insurgency">Insurgency</button>
+                <button class="filter-btn" data-filter="critical">⚠ Critical Only</button>
+                <div class="search-wrap">
+                    <span class="search-icon">⌕</span>
+                    <input id="conflict-search" type="text" placeholder="Search conflicts…" autocomplete="off" />
+                </div>
+            </div>
+
+            <!-- Cards grid -->
+            <div id="cards-grid">
+
+                <!-- UKRAINE -->
+                <div class="conflict-card severity-critical" data-type="interstate" data-severity="critical"
+                    data-name="Ukraine–Russia War">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-country">🇺🇦 UKRAINE — RUSSIA</div>
+                            <div class="card-type">Interstate Conflict · Invasion</div>
+                        </div>
+                        <span class="severity-badge critical">CRITICAL</span>
+                    </div>
+                    <p class="card-body">
+                        Russia's full-scale invasion began February 24, 2022 — the largest conventional war in Europe
+                        since World War II.
+                        Western intelligence estimates 250,000+ Russian combatant deaths; Ukraine has suffered ~100,000
+                        combat losses
+                        and 15,000+ civilian deaths. Front lines in Donbas and Zaporizhzhia remain largely static.
+                        Russia controls approximately 20% of internationally recognised Ukrainian territory.
+                        5M+ Ukrainians live as refugees; 4M are internally displaced.
+                    </p>
+                    <div class="card-stats">
+                        <div class="card-stat">
+                            <div class="card-stat-num">500K+</div>
+                            <div class="card-stat-label">Total Casualties</div>
+                        </div>
+                        <div class="card-stat">
+                            <div class="card-stat-num">5M+</div>
+                            <div class="card-stat-label">Refugees</div>
+                        </div>
+                        <div class="card-stat">
+                            <div class="card-stat-num">20%</div>
+                            <div class="card-stat-label">Territory Occupied</div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="card-started">Started: Feb 24, 2022</span>
+                        <span class="card-update">Updated Mar 2026</span>
+                    </div>
+                </div>
+
+                <!-- SUDAN -->
+                <div class="conflict-card severity-critical" data-type="civil" data-severity="critical"
+                    data-name="Sudan Civil War">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-country">🇸🇩 SUDAN</div>
+                            <div class="card-type">Civil War · SAF vs RSF</div>
+                        </div>
+                        <span class="severity-badge critical">CRITICAL</span>
+                    </div>
+                    <p class="card-body">
+                        War between the Sudanese Armed Forces (SAF) and Rapid Support Forces (RSF) erupted April 2023.
+                        ACLED estimates 20,373 killed between Aug 2024 – Aug 2025 alone — likely an undercount.
+                        Over 10 million people have been displaced, making it the world's largest displacement crisis.
+                        Famine declared in Darfur. El-Fasher remains besieged. UN classifies this as the world's worst
+                        humanitarian emergency, surpassing even Gaza in displacement scale.
+                    </p>
+                    <div class="card-stats">
+                        <div class="card-stat">
+                            <div class="card-stat-num">150K+</div>
+                            <div class="card-stat-label">Killed (est.)</div>
+                        </div>
+                        <div class="card-stat">
+                            <div class="card-stat-num">10M+</div>
+                            <div class="card-stat-label">Displaced</div>
+                        </div>
+                        <div class="card-stat">
+                            <div class="card-stat-num">2023</div>
+                            <div class="card-stat-label">Year Started</div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="card-started">Started: Apr 15, 2023</span>
+                        <span class="card-update">Updated Mar 2026</span>
+                    </div>
+                </div>
+
+                <!-- GAZA / MIDDLE EAST -->
+                <div class="conflict-card severity-critical" data-type="interstate" data-severity="critical"
+                    data-name="Gaza / Middle East War">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-country">🇵🇸 GAZA / MIDDLE EAST</div>
+                            <div class="card-type">Interstate · Multi-Front Regional War</div>
+                        </div>
+                        <span class="severity-badge critical">CRITICAL</span>
+                    </div>
+                    <p class="card-body">
+                        Triggered by Hamas's October 7, 2023 attack on Israel (1,200 killed). Israel's Gaza operation
+                        has killed 40,000+ Palestinians. ACLED records 21,417 conflict deaths in 2024-25 in this
+                        theatre.
+                        The conflict expanded to Lebanon (Hezbollah), Yemen (Houthi Red Sea attacks), and direct
+                        US-Israel operations against Iran in mid-2025. UN: Gaza's humanitarian situation catastrophic.
+                        Violence in West Bank also at record levels since 1993 Oslo Accords.
+                    </p>
+                    <div class="card-stats">
+                        <div class="card-stat">
+                            <div class="card-stat-num">40K+</div>
+                            <div class="card-stat-label">Gaza Deaths</div>
+                        </div>
+                        <div class="card-stat">
+                            <div class="card-stat-num">1.9M</div>
+                            <div class="card-stat-label">Displaced in Gaza</div>
+                        </div>
+                        <div class="card-stat">
+                            <div class="card-stat-num">6+</div>
+                            <div class="card-stat-label">Fronts Active</div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="card-started">Escalated: Oct 7, 2023</span>
+                        <span class="card-update">Updated Mar 2026</span>
+                    </div>
+                </div>
+
+                <!-- MYANMAR -->
+                <div class="conflict-card severity-high" data-type="civil" data-severity="high"
+                    data-name="Myanmar Civil War">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-country">🇲🇲 MYANMAR</div>
+                            <div class="card-type">Civil War · World's Longest Conflict</div>
+                        </div>
+                        <span class="severity-badge high">HIGH</span>
+                    </div>
+                    <p class="card-body">
+                        Myanmar's civil war began in 1948 at independence, making it the world's longest.
+                        A 2021 military coup reignited mass violence. ACLED records 15,420 casualties in 2024-25.
+                        Over 1,200 distinct armed groups have been involved. The People's Defence Force (PDF)
+                        and ethnic resistance armies have captured key border towns. The junta has lost control
+                        of significant territory in Shan, Kachin, Karen and Rakhine states.
+                    </p>
+                    <div class="card-stats">
+                        <div class="card-stat">
+                            <div class="card-stat-num">15,420</div>
+                            <div class="card-stat-label">Deaths (2024-25)</div>
+                        </div>
+                        <div class="card-stat">
+                            <div class="card-stat-num">3M+</div>
+                            <div class="card-stat-label">Internally Displaced</div>
+                        </div>
+                        <div class="card-stat">
+                            <div class="card-stat-num">1,200+</div>
+                            <div class="card-stat-label">Armed Groups</div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="card-started">Re-escalated: Feb 2021</span>
+                        <span class="card-update">Updated Mar 2026</span>
+                    </div>
+                </div>
+
+                <!-- DRC -->
+                <div class="conflict-card severity-high" data-type="civil" data-severity="high"
+                    data-name="DR Congo (DRC) Conflict">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-country">🇨🇩 DR CONGO</div>
+                            <div class="card-type">Civil / Interstate · Mineral Conflict</div>
+                        </div>
+                        <span class="severity-badge high">HIGH</span>
+                    </div>
+                    <p class="card-body">
+                        The M23 rebel group, widely accused of receiving Rwandan support, has seized eastern DRC
+                        territory in one of the most resource-rich — and conflict-ridden — regions on Earth.
+                        The conflict is driven by competition over cobalt, coltan, and gold. Over 7 million people
+                        are displaced. The conflict is deeply tied to global supply chains for electric vehicle
+                        batteries and consumer electronics. Peace talks in Nairobi continue without resolution.
+                    </p>
+                    <div class="card-stats">
+                        <div class="card-stat">
+                            <div class="card-stat-num">7M+</div>
+                            <div class="card-stat-label">Displaced</div>
+                        </div>
+                        <div class="card-stat">
+                            <div class="card-stat-num">6,900+</div>
+                            <div class="card-stat-label">Deaths (2024)</div>
+                        </div>
+                        <div class="card-stat">
+                            <div class="card-stat-num">30yr+</div>
+                            <div class="card-stat-label">Conflict Duration</div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="card-started">Current phase: Nov 2021</span>
+                        <span class="card-update">Updated Mar 2026</span>
+                    </div>
+                </div>
+
+                <!-- YEMEN -->
+                <div class="conflict-card severity-high" data-type="civil" data-severity="high"
+                    data-name="Yemen — Houthi Conflict">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-country">🇾🇪 YEMEN</div>
+                            <div class="card-type">Civil War · Regional Proxy Conflict</div>
+                        </div>
+                        <span class="severity-badge high">HIGH</span>
+                    </div>
+                    <p class="card-body">
+                        Houthi forces control northern Yemen and Sanaa. Since October 2023, Houthi attacks on Red Sea
+                        shipping have disrupted global trade — over 100 vessels struck. Coalition airstrikes continue.
+                        Yemen remains the world's worst humanitarian emergency: 21M people need aid,
+                        17M face acute food insecurity. The conflict has displaced 4.5M people.
+                        International coalition operations have intensified since Houthis declared war on Israel.
+                    </p>
+                    <div class="card-stats">
+                        <div class="card-stat">
+                            <div class="card-stat-num">377K+</div>
+                            <div class="card-stat-label">Deaths Since 2015</div>
+                        </div>
+                        <div class="card-stat">
+                            <div class="card-stat-num">21M</div>
+                            <div class="card-stat-label">Need Humanitarian Aid</div>
+                        </div>
+                        <div class="card-stat">
+                            <div class="card-stat-num">100+</div>
+                            <div class="card-stat-label">Ships Attacked</div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="card-started">Started: 2014–2015</span>
+                        <span class="card-update">Updated Mar 2026</span>
+                    </div>
+                </div>
+
+                <!-- SOMALIA -->
+                <div class="conflict-card severity-medium" data-type="insurgency" data-severity="medium"
+                    data-name="Somalia — Al-Shabaab">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-country">🇸🇴 SOMALIA</div>
+                            <div class="card-type">Insurgency · Al-Shabaab / ISWAP</div>
+                        </div>
+                        <span class="severity-badge medium">MEDIUM</span>
+                    </div>
+                    <p class="card-body">
+                        Al-Shabaab controls large swaths of southern Somalia despite 20 years of AU and US
+                        counter-operations.
+                        The group generates over $100M annually through taxation and extortion.
+                        Recent offensives in central regions have threatened government-held towns.
+                        ISKP has also established a foothold, creating a second front. Drought and conflict combined
+                        have forced 3M into acute hunger. Government offensive operations have had limited success.
+                    </p>
+                    <div class="card-stats">
+                        <div class="card-stat">
+                            <div class="card-stat-num">3,500+</div>
+                            <div class="card-stat-label">Deaths / Year (est.)</div>
+                        </div>
+                        <div class="card-stat">
+                            <div class="card-stat-num">3M</div>
+                            <div class="card-stat-label">Acute Hunger</div>
+                        </div>
+                        <div class="card-stat">
+                            <div class="card-stat-num">20yr</div>
+                            <div class="card-stat-label">Insurgency Duration</div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="card-started">Started: 2006</span>
+                        <span class="card-update">Updated Mar 2026</span>
+                    </div>
+                </div>
+
+                <!-- SYRIA -->
+                <div class="conflict-card severity-medium" data-type="civil" data-severity="medium"
+                    data-name="Syria — Post-Assad Conflict">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-country">🇸🇾 SYRIA</div>
+                            <div class="card-type">Civil War · Post-Assad Transition</div>
+                        </div>
+                        <span class="severity-badge medium">MEDIUM</span>
+                    </div>
+                    <p class="card-body">
+                        Assad's government fell in December 2024 after rebel forces captured Damascus.
+                        While major combat has reduced, fighting between factions continues. ACLED recorded
+                        6,000–9,000 deaths in the past 12 months. ISIS is resurging in central desert areas.
+                        Kurdish forces (SDF) face pressure from Turkish-backed groups in the northeast.
+                        Syria's reconstruction is estimated to cost $400 billion. 6.6M remain as refugees abroad.
+                    </p>
+                    <div class="card-stats">
+                        <div class="card-stat">
+                            <div class="card-stat-num">580K+</div>
+                            <div class="card-stat-label">Deaths Since 2011</div>
+                        </div>
+                        <div class="card-stat">
+                            <div class="card-stat-num">6.6M</div>
+                            <div class="card-stat-label">Refugees Abroad</div>
+                        </div>
+                        <div class="card-stat">
+                            <div class="card-stat-num">$400B</div>
+                            <div class="card-stat-label">Reconstruction Cost</div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="card-started">Started: 2011</span>
+                        <span class="card-update">Updated Mar 2026</span>
+                    </div>
+                </div>
+
+                <!-- NIGERIA -->
+                <div class="conflict-card severity-medium" data-type="insurgency" data-severity="medium"
+                    data-name="Nigeria — Boko Haram & Bandits">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-country">🇳🇬 NIGERIA</div>
+                            <div class="card-type">Multi-Front Insurgency</div>
+                        </div>
+                        <span class="severity-badge medium">MEDIUM</span>
+                    </div>
+                    <p class="card-body">
+                        Nigeria faces simultaneous crises: Boko Haram/ISWAP jihadist insurgency in the northeast;
+                        armed bandit violence displacing millions in the northwest; separatist tensions in the southeast
+                        (IPOB);
+                        and farmer-herder conflicts across the Middle Belt. Over 40,000 killed since 2009 in the
+                        northeast alone.
+                        Nigeria ranks consistently in the top 10 most-conflict-affected countries on ACLED's index.
+                    </p>
+                    <div class="card-stats">
+                        <div class="card-stat">
+                            <div class="card-stat-num">40K+</div>
+                            <div class="card-stat-label">Deaths Since 2009</div>
+                        </div>
+                        <div class="card-stat">
+                            <div class="card-stat-num">3.4M</div>
+                            <div class="card-stat-label">Displaced</div>
+                        </div>
+                        <div class="card-stat">
+                            <div class="card-stat-num">4</div>
+                            <div class="card-stat-label">Active Conflict Zones</div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="card-started">NE Insurgency: 2009</span>
+                        <span class="card-update">Updated Mar 2026</span>
+                    </div>
+                </div>
+
+                <!-- AFGHANISTAN -->
+                <div class="conflict-card severity-medium" data-type="insurgency" data-severity="medium"
+                    data-name="Afghanistan — Taliban & ISKP">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-country">🇦🇫 AFGHANISTAN</div>
+                            <div class="card-type">Insurgency / Civil Suppression</div>
+                        </div>
+                        <span class="severity-badge medium">MEDIUM</span>
+                    </div>
+                    <p class="card-body">
+                        The Taliban retook Kabul in August 2021 following US withdrawal. ISKP (ISIS–Khorasan)
+                        continues bombing campaigns targeting civilians, mosques, and Taliban forces.
+                        768 conflict-related deaths recorded in 2024 — a decrease, but masking deeper crisis.
+                        Women have been banned from education, employment, and public life. Afghanistan is classified
+                        as one of the world's most severe humanitarian emergencies, with 23M needing aid.
+                    </p>
+                    <div class="card-stats">
+                        <div class="card-stat">
+                            <div class="card-stat-num">176K+</div>
+                            <div class="card-stat-label">Deaths (2001–2021)</div>
+                        </div>
+                        <div class="card-stat">
+                            <div class="card-stat-num">23M</div>
+                            <div class="card-stat-label">Need Humanitarian Aid</div>
+                        </div>
+                        <div class="card-stat">
+                            <div class="card-stat-num">2001</div>
+                            <div class="card-stat-label">Modern Conflict Start</div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="card-started">Taliban takeover: Aug 2021</span>
+                        <span class="card-update">Updated Mar 2026</span>
+                    </div>
+                </div>
+
+                <!-- MEXICO -->
+                <div class="conflict-card severity-medium" data-type="insurgency" data-severity="medium"
+                    data-name="Mexico — Cartel Wars">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-country">🇲🇽 MEXICO</div>
+                            <div class="card-type">Narco-Insurgency · Cartel Conflict</div>
+                        </div>
+                        <span class="severity-badge medium">MEDIUM</span>
+                    </div>
+                    <p class="card-body">
+                        Sinaloa Cartel, CJNG, and dozens of regional groups wage a perpetual war against each other
+                        and Mexican security forces. Mexico ranks among the top 10 most conflict-affected countries.
+                        30,000+ disappearances per year; 30,000+ homicides annually. Cartels operate military-grade
+                        weapons, drones, and armoured vehicles. Entire municipalities function under cartel governance.
+                        US-Mexico tensions over cartel designation complicate policy responses.
+                    </p>
+                    <div class="card-stats">
+                        <div class="card-stat">
+                            <div class="card-stat-num">450K+</div>
+                            <div class="card-stat-label">Killed Since 2006</div>
+                        </div>
+                        <div class="card-stat">
+                            <div class="card-stat-num">30K+</div>
+                            <div class="card-stat-label">Missing / Year</div>
+                        </div>
+                        <div class="card-stat">
+                            <div class="card-stat-num">50+</div>
+                            <div class="card-stat-label">Active Cartel Groups</div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="card-started">Escalated: 2006</span>
+                        <span class="card-update">Updated Mar 2026</span>
+                    </div>
+                </div>
+
+                <!-- HAITI -->
+                <div class="conflict-card severity-high" data-type="insurgency" data-severity="high"
+                    data-name="Haiti — Gang Warfare">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-country">🇭🇹 HAITI</div>
+                            <div class="card-type">Gang Insurgency / State Collapse</div>
+                        </div>
+                        <span class="severity-badge high">HIGH</span>
+                    </div>
+                    <p class="card-body">
+                        Gang coalitions control 80%+ of Port-au-Prince. Over 4,500 killed in 2025 from political
+                        violence.
+                        ACLED's index shows Haiti becoming deadlier year-on-year. The government has lost de facto
+                        control of large areas. A Kenya-led multinational mission deployed, but faces resource
+                        constraints.
+                        700,000+ people are internally displaced. Schools, hospitals, and infrastructure are routinely
+                        attacked. Famine conditions in gang-controlled areas are worsening.
+                    </p>
+                    <div class="card-stats">
+                        <div class="card-stat">
+                            <div class="card-stat-num">4,500+</div>
+                            <div class="card-stat-label">Deaths (2025)</div>
+                        </div>
+                        <div class="card-stat">
+                            <div class="card-stat-num">700K+</div>
+                            <div class="card-stat-label">Displaced</div>
+                        </div>
+                        <div class="card-stat">
+                            <div class="card-stat-num">80%</div>
+                            <div class="card-stat-label">Capital Under Gang Control</div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="card-started">Crisis escalated: 2021</span>
+                        <span class="card-update">Updated Mar 2026</span>
+                    </div>
+                </div>
+
+            </div><!-- /#cards-grid -->
+        </div>
+    </section>
+
+
+    <!-- ╔══════════════════════════════════════════════════════╗
+     ║  SECTION 4 — DATA VISUALISATIONS                   ║
+     ╚══════════════════════════════════════════════════════╝ -->
+    <section id="data-section">
+        <div class="section-inner">
+            <div class="section-header reveal">
+                <div class="section-tag">Data &amp; Statistics</div>
+                <h2 class="section-title">CONFLICT DATA 2024–2026</h2>
+                <p class="section-sub">
+                    Verified conflict statistics from ACLED, Uppsala Conflict Data Program, and UN OCHA.
+                    All figures are estimates and subject to revision as data becomes available.
+                </p>
+            </div>
+
+            <div class="chart-grid">
+                <!-- Bar chart: Casualties by conflict -->
+                <div class="chart-panel reveal">
+                    <div class="chart-panel-title">Estimated Deaths Per Conflict — 2024/25</div>
+                    <div class="bar-row">
+                        <div class="bar-label">Ukraine–Russia</div>
+                        <div class="bar-track">
+                            <div class="bar-fill" style="width:0%;background:linear-gradient(90deg,#c0392b,#e74c3c)"
+                                data-width="100" data-val="~70,000/yr"></div>
+                        </div>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-label">Sudan</div>
+                        <div class="bar-track">
+                            <div class="bar-fill" style="width:0%;background:linear-gradient(90deg,#c0392b,#e67e22)"
+                                data-width="87" data-val="~20,373"></div>
+                        </div>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-label">Gaza / Mid-East</div>
+                        <div class="bar-track">
+                            <div class="bar-fill" style="width:0%;background:linear-gradient(90deg,#c0392b,#e74c3c)"
+                                data-width="92" data-val="~21,417"></div>
+                        </div>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-label">Myanmar</div>
+                        <div class="bar-track">
+                            <div class="bar-fill" style="width:0%;background:linear-gradient(90deg,#d4820a,#f39c12)"
+                                data-width="66" data-val="~15,420"></div>
+                        </div>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-label">DRC</div>
+                        <div class="bar-track">
+                            <div class="bar-fill" style="width:0%;background:linear-gradient(90deg,#d4820a,#f39c12)"
+                                data-width="44" data-val="~6,900"></div>
+                        </div>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-label">Syria</div>
+                        <div class="bar-track">
+                            <div class="bar-fill" style="width:0%;background:linear-gradient(90deg,#2980b9,#3498db)"
+                                data-width="37" data-val="~6,000-9,000"></div>
+                        </div>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-label">Nigeria</div>
+                        <div class="bar-track">
+                            <div class="bar-fill" style="width:0%;background:linear-gradient(90deg,#2980b9,#3498db)"
+                                data-width="30" data-val="~5,000"></div>
+                        </div>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-label">Somalia</div>
+                        <div class="bar-track">
+                            <div class="bar-fill" style="width:0%;background:linear-gradient(90deg,#5d6d7e,#7f8c8d)"
+                                data-width="22" data-val="~3,500"></div>
+                        </div>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-label">Haiti</div>
+                        <div class="bar-track">
+                            <div class="bar-fill" style="width:0%;background:linear-gradient(90deg,#5d6d7e,#7f8c8d)"
+                                data-width="20" data-val="~4,500"></div>
+                        </div>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-label">Yemen</div>
+                        <div class="bar-track">
+                            <div class="bar-fill" style="width:0%;background:linear-gradient(90deg,#5d6d7e,#7f8c8d)"
+                                data-width="18" data-val="~2,800"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Donut chart: Deaths by conflict share -->
+                <div class="chart-panel reveal reveal-delay-2">
+                    <div class="chart-panel-title">Share of Global Conflict Deaths 2024/25</div>
+                    <div class="donut-wrap">
+                        <svg id="donut-svg" width="140" height="140" viewBox="0 0 140 140">
+                            <!-- Built by JS -->
+                        </svg>
+                        <div class="donut-legend">
+                            <div class="donut-item" data-donut="Ukraine–Russia">
+                                <div class="donut-swatch"></div>
+                                <span>Ukraine–Russia</span>
+                                <span class="donut-pct"></span>
+                            </div>
+                            <div class="donut-item" data-donut="Gaza / Mid-East">
+                                <div class="donut-swatch"></div>
+                                <span>Gaza / Mid-East</span>
+                                <span class="donut-pct"></span>
+                            </div>
+                            <div class="donut-item" data-donut="Sudan">
+                                <div class="donut-swatch"></div>
+                                <span>Sudan</span>
+                                <span class="donut-pct"></span>
+                            </div>
+                            <div class="donut-item" data-donut="Myanmar">
+                                <div class="donut-swatch"></div>
+                                <span>Myanmar</span>
+                                <span class="donut-pct"></span>
+                            </div>
+                            <div class="donut-item" data-donut="Others">
+                                <div class="donut-swatch"></div>
+                                <span>All Others</span>
+                                <span class="donut-pct"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="section-rule">
+                    <div class="chart-panel-title" style="margin-bottom:.8rem">Global Displacement Overview</div>
+                    <div class="displaced-stats">
+                        <div class="displaced-stat">
+                            <div class="displaced-num" data-target="117" data-suffix="M">0</div>
+                            <div class="displaced-label">Total Forcibly Displaced</div>
+                        </div>
+                        <div class="displaced-stat">
+                            <div class="displaced-num" data-target="46" data-suffix="M">0</div>
+                            <div class="displaced-label">Newly Displaced 2025</div>
+                        </div>
+                        <div class="displaced-stat">
+                            <div class="displaced-num" data-target="36" data-suffix="M">0</div>
+                            <div class="displaced-label">Registered Refugees</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ╔══════════════════════════════════════════════════════╗
+     ║  SECTION 5 — TIMELINE                              ║
+     ╚══════════════════════════════════════════════════════╝ -->
+    <section id="timeline-section">
+        <div class="section-inner">
+            <div class="section-header reveal">
+                <div class="section-tag">Chronology of Conflict</div>
+                <h2 class="section-title">CRISIS TIMELINE 2021–2026</h2>
+                <p class="section-sub">Key events that shaped the current global conflict landscape.</p>
+            </div>
+            <div class="timeline">
+
+                <div class="timeline-item">
+                    <div class="timeline-dot amber"></div>
+                    <div class="timeline-date amber">August 2021</div>
+                    <div class="timeline-title">Taliban seizes Kabul — US withdrawal from Afghanistan</div>
+                    <div class="timeline-body">After 20 years of US military presence, Taliban forces swept into Kabul
+                        within days. 176,000+ had died in the conflict since 2001. The international community scrambled
+                        to evacuate civilians. ISIS-K bombed Kabul airport killing 170+ people.</div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">February 2022</div>
+                    <div class="timeline-title">Russia launches full-scale invasion of Ukraine</div>
+                    <div class="timeline-body">On February 24, 2022, Russia invaded Ukraine with over 190,000 troops —
+                        the largest military offensive in Europe since WWII. NATO imposed sweeping sanctions. The
+                        conflict would go on to produce 500,000+ casualties and 5M+ Ukrainian refugees.</div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-dot amber"></div>
+                    <div class="timeline-date amber">April 2023</div>
+                    <div class="timeline-title">Sudan erupts — SAF vs RSF war begins</div>
+                    <div class="timeline-body">Fighting broke out between Sudan's armed forces and the Rapid Support
+                        Forces paramilitary. Within weeks, Khartoum became a battleground. 10M+ people have since been
+                        displaced in what the UN calls the world's worst humanitarian crisis.</div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">October 7, 2023</div>
+                    <div class="timeline-title">Hamas attacks Israel — Middle East war erupts</div>
+                    <div class="timeline-body">Hamas launched an unprecedented attack on Israel, killing 1,200 people
+                        and taking 250 hostages. Israel's military response in Gaza has killed 40,000+ Palestinians. The
+                        conflict expanded into Lebanon, Yemen, Syria, Iraq, and ultimately Iran.</div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-dot blue"></div>
+                    <div class="timeline-date blue">November 2024</div>
+                    <div class="timeline-title">Ceasefire talks stall — global conflict count hits record 56</div>
+                    <div class="timeline-body">Uppsala Conflict Data Program confirms 56 active armed conflicts — the
+                        highest count since records began. Diplomatic efforts in multiple theatres collapse. ACLED
+                        confirms 240,000+ deaths in 12 months across global conflict zones.</div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-dot amber"></div>
+                    <div class="timeline-date amber">December 2024</div>
+                    <div class="timeline-title">Assad falls — Syria enters post-war transition</div>
+                    <div class="timeline-body">After 13 years of war and with Russian support diminished, rebel forces
+                        captured Damascus in days. Bashar al-Assad fled to Russia. The fall of Assad ends one chapter
+                        but opens another: factional fighting, ISIS resurgence, and Turkish-Kurdish tensions continue.
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">Early 2025</div>
+                    <div class="timeline-title">Sudan famine declared — DRC M23 offensive intensifies</div>
+                    <div class="timeline-body">UN formally declares famine in Darfur, Sudan — the first since 2011 in
+                        Somalia. Simultaneously, M23 rebels backed by Rwanda capture key DRC cities. Mineral-rich
+                        eastern Congo becomes a flashpoint for regional proxy warfare.</div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-dot blue"></div>
+                    <div class="timeline-date blue">Mid 2025</div>
+                    <div class="timeline-title">US–Israel operations target Iran — regional war escalates</div>
+                    <div class="timeline-body">Direct US-Israel military operations against Iranian nuclear and military
+                        infrastructure mark a dramatic escalation. Iran responds with ballistic missile strikes. The
+                        region teeters on the edge of wider conflagration as diplomacy collapses.</div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-date">March 2026</div>
+                    <div class="timeline-title">46 active armed conflicts — world reaches highest point since WWII</div>
+                    <div class="timeline-body">As of March 2026, the Global Conflict Map tracks 46 active armed
+                        conflicts across 76 countries. Ukraine's front lines remain static. Sudan's crisis deepens. Gaza
+                        ceasefire negotiations continue without resolution. The global conflict landscape remains at its
+                        most complex since the post-WWII era.</div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ╔══════════════════════════════════════════════════════╗
+     ║  SECTION 6 — HUMANITARIAN IMPACT                   ║
+     ╚══════════════════════════════════════════════════════╝ -->
+    <section id="humanitarian">
+        <div class="section-inner">
+            <div class="section-header reveal">
+                <div class="section-tag">Humanitarian Crisis</div>
+                <h2 class="section-title">THE HUMAN COST</h2>
+                <p class="section-sub">
+                    The catastrophic toll of armed conflict on civilian populations.
+                    Data from UNHCR, UN OCHA, WFP, and ICRC.
+                </p>
+            </div>
+
+            <div class="impact-grid reveal">
+                <div class="impact-card">
+                    <div class="impact-icon">💀</div>
+                    <div class="impact-num" data-target="240,000" data-suffix="+">0</div>
+                    <div class="impact-label">Direct Deaths (12 Months)</div>
+                    <div class="impact-desc">Verified combat and political violence deaths across all 46 active
+                        conflicts per ACLED. True toll likely far higher due to indirect deaths from famine and disease.
+                    </div>
+                </div>
+                <div class="impact-card">
+                    <div class="impact-icon">🏕️</div>
+                    <div class="impact-num amber" data-target="117" data-suffix="M">0</div>
+                    <div class="impact-label">Forcibly Displaced People</div>
+                    <div class="impact-desc">Total forcibly displaced people worldwide — a record high surpassing every
+                        previous year. Includes refugees, asylum seekers, and internally displaced persons.</div>
+                </div>
+                <div class="impact-card">
+                    <div class="impact-icon">🍽️</div>
+                    <div class="impact-num amber" data-target="282" data-suffix="M">0</div>
+                    <div class="impact-label">Facing Acute Food Insecurity</div>
+                    <div class="impact-desc">282 million people face acute hunger — overwhelmingly driven by conflict.
+                        Sudan, Yemen, Gaza, Somalia, and DRC account for the majority of the most severe cases.</div>
+                </div>
+                <div class="impact-card">
+                    <div class="impact-icon">🏥</div>
+                    <div class="impact-num blue" data-target="2,800" data-suffix="+">0</div>
+                    <div class="impact-label">Healthcare Facilities Attacked</div>
+                    <div class="impact-desc">Attacks on hospitals, clinics, and medical workers globally since 2022.
+                        Gaza, Ukraine, Sudan, and Myanmar account for the majority. WHO has issued repeated emergency
+                        condemnations.</div>
+                </div>
+                <div class="impact-card">
+                    <div class="impact-icon">👶</div>
+                    <div class="impact-num" data-target="43" data-suffix="%">0</div>
+                    <div class="impact-label">Refugees Who Are Children</div>
+                    <div class="impact-desc">Almost half of the world's forcibly displaced are children under 18.
+                        Millions are out of school, face exploitation, and are denied basic rights in conflict zones
+                        worldwide.</div>
+                </div>
+                <div class="impact-card">
+                    <div class="impact-icon">💰</div>
+                    <div class="impact-num green" data-target="46" data-suffix="B">0</div>
+                    <div class="impact-label">UN Humanitarian Appeal (USD)</div>
+                    <div class="impact-desc">The UN's 2025-2026 global humanitarian appeal totals $46 billion — the
+                        largest in history. Funding gap: only 38% has been received, leaving tens of millions without
+                        adequate aid.</div>
+                </div>
+            </div>
+
+            <!-- UN Aid Funding Gap -->
+            <div class="chart-panel reveal" style="margin-top:2rem">
+                <div class="chart-panel-title">UN Humanitarian Aid Funding Gap by Crisis (% Funded)</div>
+                <div class="aid-section">
+                    <div class="aid-row">
+                        <div class="aid-label">Yemen Response Plan</div>
+                        <div class="aid-bar-track">
+                            <div class="aid-bar-fill" style="width:0%;background:linear-gradient(90deg,#27ae60,#2ecc71)"
+                                data-width="42"></div>
+                        </div>
+                        <div class="aid-pct">42%</div>
+                    </div>
+                    <div class="aid-row">
+                        <div class="aid-label">Sudan Emergency</div>
+                        <div class="aid-bar-track">
+                            <div class="aid-bar-fill" style="width:0%;background:linear-gradient(90deg,#e74c3c,#c0392b)"
+                                data-width="28"></div>
+                        </div>
+                        <div class="aid-pct">28%</div>
+                    </div>
+                    <div class="aid-row">
+                        <div class="aid-label">DRC Humanitarian</div>
+                        <div class="aid-bar-track">
+                            <div class="aid-bar-fill" style="width:0%;background:linear-gradient(90deg,#e74c3c,#c0392b)"
+                                data-width="34"></div>
+                        </div>
+                        <div class="aid-pct">34%</div>
+                    </div>
+                    <div class="aid-row">
+                        <div class="aid-label">Afghanistan Response</div>
+                        <div class="aid-bar-track">
+                            <div class="aid-bar-fill" style="width:0%;background:linear-gradient(90deg,#d4820a,#f39c12)"
+                                data-width="48"></div>
+                        </div>
+                        <div class="aid-pct">48%</div>
+                    </div>
+                    <div class="aid-row">
+                        <div class="aid-label">Syria Regional Response</div>
+                        <div class="aid-bar-track">
+                            <div class="aid-bar-fill" style="width:0%;background:linear-gradient(90deg,#d4820a,#f39c12)"
+                                data-width="52"></div>
+                        </div>
+                        <div class="aid-pct">52%</div>
+                    </div>
+                    <div class="aid-row">
+                        <div class="aid-label">Myanmar Appeal</div>
+                        <div class="aid-bar-track">
+                            <div class="aid-bar-fill" style="width:0%;background:linear-gradient(90deg,#e74c3c,#c0392b)"
+                                data-width="31"></div>
+                        </div>
+                        <div class="aid-pct">31%</div>
+                    </div>
+                    <div class="aid-row">
+                        <div class="aid-label">Somalia Emergency</div>
+                        <div class="aid-bar-track">
+                            <div class="aid-bar-fill" style="width:0%;background:linear-gradient(90deg,#d4820a,#f39c12)"
+                                data-width="45"></div>
+                        </div>
+                        <div class="aid-pct">45%</div>
+                    </div>
+                    <div class="aid-row">
+                        <div class="aid-label">Gaza / Palestinian</div>
+                        <div class="aid-bar-track">
+                            <div class="aid-bar-fill" style="width:0%;background:linear-gradient(90deg,#27ae60,#2ecc71)"
+                                data-width="62"></div>
+                        </div>
+                        <div class="aid-pct">62%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ╔══════════════════════════════════════════════════════╗
+     ║  SECTION 7 — RESOURCES                             ║
+     ╚══════════════════════════════════════════════════════╝ -->
+    <section id="resources">
+        <div class="section-inner">
+            <div class="section-header reveal">
+                <div class="section-tag">Further Reading &amp; Action</div>
+                <h2 class="section-title">RESOURCES &amp; ORGANISATIONS</h2>
+                <p class="section-sub">
+                    Key organisations monitoring conflict, providing humanitarian aid, and advocating for peace.
+                    Data sources used in this platform are listed below.
+                </p>
+            </div>
+            <div class="resources-grid reveal">
+                <div class="resource-card">
+                    <div class="resource-org">Data Source</div>
+                    <div class="resource-title">ACLED — Armed Conflict Location &amp; Event Data Project</div>
+                    <div class="resource-desc">Real-time data on political violence and protests worldwide. Primary
+                        source for conflict event counts and casualty statistics on this platform.</div>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-org">Data Source</div>
+                    <div class="resource-title">Uppsala Conflict Data Program (UCDP)</div>
+                    <div class="resource-desc">Sweden-based program providing the world's most reliable and long-running
+                        data on organised violence and armed conflict since 1946.</div>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-org">UN Agency</div>
+                    <div class="resource-title">UNHCR — UN Refugee Agency</div>
+                    <div class="resource-desc">Tracks and protects the world's forcibly displaced populations. Manages
+                        refugee registration and coordinates humanitarian response in over 130 countries.</div>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-org">UN Agency</div>
+                    <div class="resource-title">UN OCHA — Office for the Coordination of Humanitarian Affairs</div>
+                    <div class="resource-desc">Coordinates global emergency humanitarian response. Publishes the Global
+                        Humanitarian Overview and tracks funding gaps across all major crises.</div>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-org">NGO — Conflict Analysis</div>
+                    <div class="resource-title">International Crisis Group (ICG)</div>
+                    <div class="resource-desc">Independent organisation conducting field research on conflicts
+                        worldwide. Provides policy recommendations to governments and international organisations to
+                        prevent and resolve conflict.</div>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-org">NGO — Humanitarian</div>
+                    <div class="resource-title">Médecins Sans Frontières (MSF)</div>
+                    <div class="resource-desc">Provides emergency medical aid in conflict zones worldwide including
+                        Sudan, Gaza, DRC, Yemen, and Myanmar. Operates in areas where access is most dangerous.</div>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-org">International Law</div>
+                    <div class="resource-title">ICRC — International Committee of the Red Cross</div>
+                    <div class="resource-desc">The ICRC protects civilians and prisoners of war under international
+                        humanitarian law. Monitors compliance with the Geneva Conventions in active conflict zones.
+                    </div>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-org">Peace Research</div>
+                    <div class="resource-title">Institute for Economics &amp; Peace — Global Peace Index</div>
+                    <div class="resource-desc">Publishes the annual Global Peace Index measuring the state of peace
+                        across 163 countries. 2025 index shows global peacefulness at its lowest point since 2008.</div>
+                </div>
+                <div class="resource-card">
+                    <div class="resource-org">Journalism</div>
+                    <div class="resource-title">Bellingcat — Open Source Intelligence</div>
+                    <div class="resource-desc">Investigative journalism using open-source intelligence to verify
+                        conflict events, war crimes, and military movements. Has documented conflicts in Ukraine, Syria,
+                        and beyond.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ══════════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════════ -->
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <h2>GLOBAL WAR MONITOR</h2>
+                <p>
+                    This platform aggregates publicly available conflict data from ACLED, UCDP, UN OCHA, UNHCR,
+                    and the International Crisis Group for educational and informational purposes.
+                    All casualty figures are estimates. The goal is to inform — not to sensationalise.
+                    Every number represents a human life.
+                </p>
+            </div>
+            <div class="footer-disclaimer">
+                <p>Data: ACLED · UCDP · UN OCHA · UNHCR · ICG</p>
+                <p>Last updated: March 2026</p>
+                <p>Educational use only. Not affiliated with any government.</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© <span id="current-year"></span> Global War Monitor — All data sourced from public records</p>
+            <p style="color:var(--red-dim)">⚠ This site contains information about ongoing armed conflicts</p>
+        </div>
+    </footer>
+
+    <!-- Script -->
+    <script src="script.js"></script>
+</body>
+
+</html>
