@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Cosmic Echo - Interactive Story</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+    <!-- Cinematic Overlays -->
+    <div class="film-grain"></div>
+    <!-- Removed "hidden md:block" so the cursor shows up in the narrower preview window -->
+    <div id="custom-cursor"></div>
+    <div id="cursor-glow"></div>
+
+    <!-- Interactive Dot Navigation -->
+    <nav id="dot-nav" class="fixed right-6 top-1/2 transform -translate-y-1/2 z-40 flex flex-col gap-5 opacity-0 transition-opacity duration-1000 pointer-events-none">
+        <button data-target="intro" class="w-3 h-3 rounded-full bg-white/30 hover:bg-white/90 transition-all duration-300 nav-dot active-dot relative group"><span class="absolute right-6 top-1/2 -translate-y-1/2 px-2 py-1 bg-black/60 backdrop-blur-md border border-white/10 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Chapter I</span></button>
+        <button data-target="plot1" class="w-3 h-3 rounded-full bg-white/30 hover:bg-white/90 transition-all duration-300 nav-dot relative group"><span class="absolute right-6 top-1/2 -translate-y-1/2 px-2 py-1 bg-black/60 backdrop-blur-md border border-white/10 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Chapter II</span></button>
+        <button data-target="plot2" class="w-3 h-3 rounded-full bg-white/30 hover:bg-white/90 transition-all duration-300 nav-dot relative group"><span class="absolute right-6 top-1/2 -translate-y-1/2 px-2 py-1 bg-black/60 backdrop-blur-md border border-white/10 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Chapter III</span></button>
+        <button data-target="conclusion" class="w-3 h-3 rounded-full bg-white/30 hover:bg-white/90 transition-all duration-300 nav-dot relative group"><span class="absolute right-6 top-1/2 -translate-y-1/2 px-2 py-1 bg-black/60 backdrop-blur-md border border-white/10 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Epilogue</span></button>
+    </nav>
+
+    <!-- Start Screen (Required for Audio Context Policy) -->
+    <div id="start-screen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black text-center px-4 transition-opacity duration-1000 bg-[url('https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center overflow-hidden">
+        <!-- Animated atmospheric rings -->
+        <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-purple-900/30 to-black/90 backdrop-blur-[2px]"></div>
+        <div class="absolute w-[200vw] h-[200vw] md:w-[100vw] md:h-[100vw] rounded-full border border-purple-500/20 border-dashed animate-[spin_120s_linear_infinite] opacity-40"></div>
+        <div class="absolute w-[150vw] h-[150vw] md:w-[70vw] md:h-[70vw] rounded-full border border-blue-500/20 animate-[spin_90s_linear_infinite_reverse] opacity-30"></div>
+        
+        <div class="z-10 flex flex-col items-center animate-float-slow glass-panel p-10 md:p-20 rounded-[3rem] border-purple-500/30 shadow-[0_0_80px_rgba(0,0,0,0.8)] relative max-w-4xl w-full mx-4">
+            <div class="absolute -top-12 opacity-80">
+                <i data-lucide="infinity" class="w-24 h-24 text-purple-400 animate-pulse drop-shadow-[0_0_15px_rgba(168,85,247,0.8)]"></i>
+            </div>
+            <h1 class="text-5xl md:text-8xl font-bold mb-6 tracking-[0.2em] font-space text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-fuchsia-100 to-purple-300 drop-shadow-[0_0_25px_rgba(168,85,247,0.5)]">THE COSMIC ECHO</h1>
+            <div class="w-32 h-1 bg-gradient-to-r from-transparent via-purple-500 to-transparent mb-8"></div>
+            <p class="text-xl md:text-2xl text-purple-100/90 max-w-2xl mb-12 font-light tracking-wide leading-relaxed">
+                An interactive audiovisual journey. <br>
+                <span class="text-xs font-bold tracking-[0.4em] uppercase mt-6 block text-purple-300/80">Headphones highly recommended</span>
+            </p>
+            <button id="start-btn" class="px-12 py-5 bg-purple-600 hover:bg-purple-500 text-white rounded-full font-bold tracking-[0.3em] transition-all flex items-center gap-4 border border-purple-300/50 btn-pulse relative overflow-hidden group shadow-[0_0_40px_rgba(147,51,234,0.6)]">
+                <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out"></div>
+                <i data-lucide="headphones" class="w-6 h-6 relative z-10"></i>
+                <span class="relative z-10 uppercase text-sm">Initiate Sequence</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Story Container -->
+    <main id="story-container" class="opacity-0 transition-opacity duration-1000 hidden pointer-events-none">
+        
+        <!-- Section 1: Introduction -->
+        <section id="intro" class="story-section w-full h-screen flex flex-col items-center justify-center px-6 relative bg-[url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop')]">
+            <div class="overlay"></div>
+            
+            <div class="max-w-6xl w-full z-10 flex flex-col md:flex-row items-center gap-12">
+                <div class="flex-1 glass-panel p-8 md:p-12 rounded-3xl text-center md:text-left reveal-up">
+                    <div class="flex items-center justify-center md:justify-start gap-3 mb-6">
+                        <i data-lucide="orbit" class="w-6 h-6 text-purple-400"></i>
+                        <span class="text-purple-400 text-sm tracking-[0.3em] font-bold uppercase">Chapter I</span>
+                    </div>
+                    <h2 class="text-5xl md:text-7xl font-bold mb-6 text-white drop-shadow-lg reveal-up delay-100">The Departure</h2>
+                    <p class="text-xl text-gray-200 leading-relaxed reveal-up delay-300 font-light">
+                        Earth was no longer the vibrant blue marble of our ancestors. It was tired. As the final launch sequence initiated, humanity looked towards the stars not with curiosity, but with necessity.
+                    </p>
+                </div>
+                <div class="flex-1 hidden md:flex justify-center reveal-scale delay-500">
+                    <div class="w-48 h-48 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-md bg-white/5 shadow-[0_0_50px_rgba(255,255,255,0.1)]">
+                        <i data-lucide="rocket" class="w-20 h-20 text-blue-300"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="absolute bottom-10 flex flex-col items-center text-white/70 scroll-indicator reveal-up delay-700 z-10">
+                <span class="text-xs tracking-widest uppercase mb-2">Scroll</span>
+                <i data-lucide="chevron-down" class="w-6 h-6"></i>
+            </div>
+        </section>
+
+        <!-- Section 2: Plot Point 1 -->
+        <section id="plot1" class="story-section w-full h-screen flex flex-col items-center justify-center px-6 relative bg-[url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=2048&auto=format&fit=crop')]">
+            <div class="overlay"></div>
+            
+            <div class="max-w-6xl w-full z-10 flex flex-col-reverse md:flex-row items-center gap-12">
+                <div class="flex-1 hidden md:flex justify-center reveal-scale delay-300">
+                    <div class="p-8 rounded-full glass-panel border-white/20">
+                        <i data-lucide="radar" class="w-24 h-24 text-gray-300 animate-[spin_10s_linear_infinite]"></i>
+                    </div>
+                </div>
+                <div class="flex-1 glass-panel p-8 md:p-12 rounded-3xl text-center md:text-left reveal-up">
+                    <div class="flex items-center justify-center md:justify-start gap-3 mb-6">
+                        <i data-lucide="milestone" class="w-6 h-6 text-gray-400"></i>
+                        <span class="text-gray-400 text-sm tracking-[0.3em] font-bold uppercase">Chapter II</span>
+                    </div>
+                    <h2 class="text-5xl md:text-7xl font-bold mb-6 text-white drop-shadow-lg reveal-up delay-100">The Infinite Void</h2>
+                    <p class="text-xl text-gray-300 leading-relaxed reveal-up delay-300 font-light">
+                        Centuries passed in cryo-sleep. The ship, the *Aethelgard*, drifted silently through the crushing emptiness of the void. Here, time lost its meaning. There was only the hum of the engine and the terrifying beauty of the dark.
+                    </p>
+                    <div class="mt-8 flex flex-wrap gap-4 justify-center md:justify-start reveal-up delay-500">
+                        <div class="px-5 py-2 glass-panel rounded-full text-sm text-green-300 flex items-center gap-2 border-white/10">
+                            <i data-lucide="activity" class="w-4 h-4"></i> Status: Nominal
+                        </div>
+                        <div class="px-5 py-2 glass-panel rounded-full text-sm text-blue-300 flex items-center gap-2 border-white/10">
+                            <i data-lucide="map" class="w-4 h-4"></i> Dist: 4.2 Lightyears
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Plot Point 2 -->
+        <section id="plot2" class="story-section w-full h-screen flex flex-col items-center justify-center px-6 relative bg-[url('https://images.unsplash.com/photo-1462332420958-a05d1e002413?q=80&w=2000&auto=format&fit=crop')]">
+            <div class="overlay bg-black/40"></div>
+            
+            <div class="max-w-4xl w-full z-10 text-center glass-panel p-10 md:p-16 rounded-[3rem] reveal-scale">
+                <div class="flex items-center justify-center gap-3 mb-4 reveal-up">
+                    <i data-lucide="aperture" class="w-6 h-6 text-fuchsia-400"></i>
+                    <span class="text-fuchsia-300 text-sm tracking-[0.3em] font-bold uppercase">Chapter III</span>
+                </div>
+                <h2 class="text-5xl md:text-7xl font-bold mb-8 text-white drop-shadow-[0_0_20px_rgba(217,70,239,0.5)] reveal-up delay-100">The Discovery</h2>
+                
+                <div class="w-24 h-24 mx-auto mb-8 rounded-full bg-fuchsia-500/20 flex items-center justify-center reveal-scale delay-300 shadow-[0_0_40px_rgba(217,70,239,0.4)] border border-fuchsia-400/30 animate-pulse">
+                    <i data-lucide="radio" class="w-12 h-12 text-fuchsia-200"></i>
+                </div>
+                
+                <p class="text-2xl text-fuchsia-50/90 leading-relaxed reveal-up delay-500 font-light">
+                    It wasn't a planet. It was an anomaly. A colossal structure orbiting a dead star, emitting a frequency that bypassed our sensors and spoke directly into our minds. It was an invitation. It was an echo of something older than time.
+                </p>
+            </div>
+        </section>
+
+        <!-- Section 4: Conclusion -->
+        <section id="conclusion" class="story-section w-full h-screen flex flex-col items-center justify-center px-6 relative bg-[url('https://images.unsplash.com/photo-1541873676-a18131494184?q=80&w=2018&auto=format&fit=crop')]">
+            <div class="overlay bg-gradient-to-t from-orange-900/80 to-transparent"></div>
+            
+            <div class="max-w-4xl w-full z-10 flex flex-col items-center text-center glass-panel p-10 md:p-16 rounded-[3rem]">
+                <div class="flex items-center justify-center gap-3 mb-6 reveal-up delay-100">
+                    <i data-lucide="sparkles" class="w-6 h-6 text-orange-300"></i>
+                    <span class="text-orange-300 text-sm tracking-[0.3em] font-bold uppercase">Epilogue</span>
+                </div>
+                
+                <h2 class="text-6xl md:text-8xl font-bold mb-8 text-white drop-shadow-[0_0_30px_rgba(251,146,60,0.6)] reveal-up delay-300">A New Dawn</h2>
+                
+                <p class="text-2xl text-orange-50 leading-relaxed max-w-3xl reveal-up delay-500 font-light">
+                    We did not find a new Earth. We found a new understanding of existence. As the alien gateway engaged, bathing the ship in golden light, we took our first step not as refugees, but as cosmic citizens.
+                </p>
+                
+                <button onclick="document.getElementById('story-container').scrollTo({top: 0, behavior: 'smooth'})" class="mt-16 px-8 py-4 glass-panel hover:bg-white/10 text-orange-200 hover:text-white rounded-full transition-all flex items-center gap-3 reveal-up delay-700 font-bold tracking-widest uppercase text-sm group border-orange-300/30">
+                    <i data-lucide="arrow-up-circle" class="w-6 h-6 group-hover:-translate-y-1 transition-transform"></i>
+                    Begin Again
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="./script.js"></script>
+</body>
+</html>
