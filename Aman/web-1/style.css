@@ -1,76 +1,101 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-    background: linear-gradient(180deg, #0a0f1a 0%, #020617 50%, #111827 100%);
+    background: #020617;
     color: #e2e8f0;
-    font-family: 'Inter', -apple-system, sans-serif;
-    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
 }
 
-.container {
-    height: 100vh;
-    overflow-y: scroll;
-    scroll-snap-type: y mandatory;
-    scroll-behavior: smooth;
+/* Background & Orbit Line */
+.stars {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(1px 1px at 10% 10%, #fff, transparent),
+                radial-gradient(2px 2px at 50% 50%, #fff, transparent);
+    background-size: 200px 200px;
+    opacity: 0.2;
+    z-index: -1;
 }
 
-.planet-section {
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    padding: 0 10%;
-    scroll-snap-align: start;
+.orbit-path {
+    position: fixed;
+    top: 0; left: 50%;
+    width: 2px; height: 100%;
+    background: linear-gradient(to bottom, transparent, rgba(97, 218, 251, 0.3), transparent);
+    transform: translateX(-50%);
+    z-index: 0;
 }
 
-.sphere {
-    width: 400px;
-    height: 400px;
-    border-radius: 50%;
-    background-size: cover;
-    background-position: center;
-    /* This inner shadow creates the 3D spherical effect */
-    box-shadow: inset -30px -30px 70px rgba(0,0,0,0.9), 0 0 40px rgba(255,255,255,0.05);
-    transition: transform 1.2s cubic-bezier(0.1, 1, 0.2, 1);
-    background-color: #000; /* Keeps images with white backgrounds clean */
-}
-
-/* Image Integration */
-.img-p1 { background-image: url('https://imgs.search.brave.com/tQeuYgsPbEvCzmIBMovWlY2BPvqAmj9EMXo7SExNDPQ/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvMTMw/NDAwMTM4Mi9waG90/by9zYXR1cm4tcGxh/bmV0LWdhcy1naWFu/dC0zZC1pbGx1c3Ry/YXRpb24tYmlnLXBs/YW5ldC13aXRoLXJp/bmcuanBnP3M9NjEyeDYx/MiZ3PTAmaz0yMCZjPWhuT1A2N3FM/VjFYcng2bWZ2cHpS/cXpGRE0wMXdUTDE5/cllYVEZ0cWdXcWM9'); }
-.img-p2 { background-image: url('https://imgs.search.brave.com/FXDh12Mtr2i9oneaP8tMz9GBTfhMQ2XdVNe_d32BytY/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvMTUw/NzIxNTg0Ni9waG90/by9wbGFuZXQtc2F0/dXJuLmpwZz9zPTYx/Mng2MTImdz0wJms9/MjAmYz1YSUxvUGlC/WkFrTFBVM2l6R2xr/S3Npd2dMTkFXQnR6/TmcyblQwTEFWaVlr/PQ'); }
-.img-p3 { background-image: url('https://imgs.search.brave.com/UDmBDSyn4u0bhZ2JC2B7IkX4-fL2xpRlBkn7ME9EZNE/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9jZG4u/bW9zLmNtcy5mdXR1/cmVjZG4ubmV0L0tG/d1M2eEU2QTU4WXR0/ZHVONzcyd0EuanBn'); }
-.img-p4 { background-image: url('https://imgs.search.brave.com/d9590UkEjFqTsePpWLg-2gyf0o5jUA9tLy3MxNkdFAU/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvNTQy/MzY1NjEyL3Bob3Rv/L3RoZS1wbGFuZXQt/dmVudXMtaXMtY2Fw/dHVyZWQtYnktdGhl/LW1hZ2VsbGFuLXBy/b2Jlcy1tYXBwaW5n/LXJhZGFyLWxvY2F0/aW9uLXZlbnVzLmpw/Zz9zPTYxMng2MTIm/dz0wJms9MjAmYz13/TGR3ZjRtUDdVSC1i/ckwxSnV5eDRoaDF0/YWNrajhmMXExWERl/ckRBLTRFPQ'); }
-.img-p5 { background-image: url('https://imgs.search.brave.com/uTKtuBoyZL6467zBwbLwo2bIqyvqEoRIa6-5XRX-H6Q/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/ZnJlZXBpay5jb20v/cHJlbWl1bS1waG90/by9wbGFuZXQtd2l0/aC1ibHVlLXNreS1j/bG91ZHMtaXRfOTQx/MjY1LTE5NTYzLmpw/Zz9zZW10PWFpc19o/eWJyaWQmdz03NDAm/cT04MA'); }
-.img-p6 { background-image: url('https://imgs.search.brave.com/BgoPpq7mwx66Lt1VY7xhmNoCdVJuiHKCGlnyTPDWA_k/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzAxLzAyLzQzLzU3/LzM2MF9GXzEwMjQz/NTc5MF9lZTVQZmZB/N1djVW1DWkdiQUFK/UUNtZ2RXNmdFa2E2/Ri5qcGc'); }
-.img-p7 { background-image: url('https://imgs.search.brave.com/OXOhAgWTkBa-eBngF82jHY9M4mR_YtRs1JGSlHtalS0/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvMTgy/NDM4NzM1Mi9waG90/by9zYXR1cm4tcGxh/bmV0LWluLXRoZS12/ZWx2ZXR5LWRlcHRo/cy1vZi1zcGFjZS1z/YXR1cm4tdGhlLW1h/Z25pZmljZW50LXJp/bmdlZC1naWFudC1k/YW5jZXMtaW4uanBn/P3M9NjEyeDYxMiZ3/PTAmaz0yMCZjPWtY/MVhMSDc1VWFweGNK/a0xtVWI4Z2wySEk2/bVFmbDM1QVA5VFFa/MW0tUGs9'); }
-.img-p8 { background-image: url('https://imgs.search.brave.com/kkQTppYUevCHrhQtyL8kVmQLFA0fxcy9bZix5dcSrd0/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvMTE0/Mjk4MDg3Ni9waG90/by9tYXJzLXBsYW5l/dC1pc29sYXRlZC1p/bi13aGl0ZS5qcGc_/cz02MTJ4NjEyJnc9/MCZrPTIwJmM9YU5N/elJZQ2xpc3pHODhK/VXFpWVQ4V0hMaTlm/cjB6dFVYVWhRMWhJ/UVNYRT0'); }
-.img-p9 { background-image: url('https://imgs.search.brave.com/E9ZiPZlI6DV61P3_UUmAVBPp88P5tbklHVY1bHqYS1o/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzAwLzky/LzBmLzAwOTIwZjZj/OGE0NDA0MTZjOWJh/M2ZmY2E3NmZhYWQy/LmpwZw'); }
-
-.glass {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 3rem;
-    border-radius: 28px;
-    max-width: 420px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-}
-
+/* Navigation */
 .navbar {
     position: fixed;
     top: 0; width: 100%;
-    padding: 1.5rem 5%;
-    display: flex;
-    justify-content: space-between;
+    text-align: center;
+    padding: 1.5rem;
     z-index: 100;
 }
+.logo { font-size: 2.5rem; font-weight: 800; color: #61dafb; letter-spacing: 8px; }
+.tagline { font-size: 0.8rem; letter-spacing: 4px; opacity: 0.7; }
 
-.logo { font-weight: 800; color: #61dafb; letter-spacing: 3px; }
+/* Layout Grid */
+.container { padding-top: 150px; }
 
-/* Subtle Floating Animation */
-.planet-visual { animation: float 5s ease-in-out infinite; }
-@keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-20px); }
+.planet-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh;
+    padding: 0 5%;
+    gap: 4rem;
+    opacity: 0;
+    transition: all 1.2s ease-out;
 }
+
+.planet-row.left { transform: translateX(-100px); flex-direction: row; }
+.planet-row.right { transform: translateX(100px); flex-direction: row-reverse; }
+
+.planet-row.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* The Sphere (Shape Correction) */
+.sphere {
+    width: 350px;
+    height: 350px;
+    border-radius: 50%; /* Makes it perfectly round */
+    background-size: cover;
+    background-position: center;
+    box-shadow: 
+        inset -30px -30px 60px rgba(0,0,0,0.8),
+        0 0 40px rgba(97, 218, 251, 0.2);
+    animation: rotate 30s linear infinite;
+}
+
+@keyframes rotate {
+    from { filter: hue-rotate(0deg); }
+    to { filter: hue-rotate(360deg); }
+}
+
+/* Images */
+.p1 { background-image: url('https://images.pexels.com/photos/36008923/pexels-photo-36008923.jpeg?auto=compress&cs=tinysrgb&w=500'); }
+.p2 { background-image: url('https://media.gettyimages.com/id/1359393157/vector/venus-illustration.jpg?s=612x612&w=0&k=20&c=MvuXLwruRQCF78vDUGTwtvbF-FW0WMn4hbJscvTQIHc='); }
+.p3 { background-image: url('https://media.gettyimages.com/id/460713161/vector/venus-artwork.jpg?s=612x612&w=0&k=20&c=neRu2nnTEdyMYyLjXNSoknzw_9-ZKMAY2qw9OBiAywE='); }
+.p4 { background-image: url('https://esahubble.org/media/archives/images/medium/jupiter-auroras1.jpg'); }
+.p5 { background-image: url('https://cdn.mos.cms.futurecdn.net/uVwrSjfVvkGwk9y6zNJMob.jpg'); }
+.p6 { background-image: url('https://plus.unsplash.com/premium_photo-1678820783285-192e0355183c?fm=jpg&q=60&w=3000'); }
+
+/* Glass Cards */
+.glass {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 2.5rem;
+    border-radius: 20px;
+    max-width: 400px;
+}
+
+.glass h1 { color: #61dafb; margin-bottom: 1rem; }
+.glass p { line-height: 1.6; opacity: 0.8; }
+
