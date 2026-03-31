@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ElectroHub — Next Gen Electronics</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Syne:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #050c1a;
+      --bg2: #080f20;
+      --card: #0d1829;
+      --card2: #111f35;
+      --accent: #00d4ff;
+      --accent2: #7b2fff;
+      --accent3: #ff6b35;
+      --text: #e8f4f8;
+      --muted: #6b8fa8;
+      --border: rgba(0,212,255,0.15);
+      --glow: 0 0 30px rgba(0,212,255,0.3);
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg2); }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+
+    /* ── GRID BACKGROUND ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ══════════ HEADER ══════════ */
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      height: 70px;
+      background: rgba(5,12,26,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      transition: all 0.3s;
+    }
+    header.scrolled {
+      height: 60px;
+      background: rgba(5,12,26,0.97);
+      box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+    }
+    .logo {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--accent);
+      letter-spacing: 2px;
+      text-shadow: var(--glow);
+      display: flex; align-items: center; gap: 8px;
+      text-decoration: none;
+    }
+    .logo-bolt { font-size: 26px; animation: pulse-bolt 2s infinite; }
+    @keyframes pulse-bolt {
+      0%,100% { filter: drop-shadow(0 0 4px var(--accent)); }
+      50% { filter: drop-shadow(0 0 16px var(--accent)); }
+    }
+    nav ul { display: flex; list-style: none; gap: 8px; }
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 8px 14px;
+      border-radius: 6px;
+      transition: all 0.2s;
+      position: relative;
+    }
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: 2px; left: 50%; right: 50%;
+      height: 2px;
+      background: var(--accent);
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+    nav a:hover { color: var(--accent); }
+    nav a:hover::after { left: 14px; right: 14px; }
+    nav a.active { color: var(--accent); }
+    nav a.active::after { left: 14px; right: 14px; }
+
+    /* Hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 5px;
+    }
+    .hamburger span {
+      display: block; width: 24px; height: 2px;
+      background: var(--accent);
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+    .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
+
+    /* ══════════ HERO ══════════ */
+    #home {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 120px 60px 80px;
+      gap: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    /* Radial glow BG */
+    #home::after {
+      content: '';
+      position: absolute;
+      top: 20%; left: 50%;
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(123,47,255,0.12) 0%, transparent 70%);
+      transform: translate(-50%,-50%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0,212,255,0.08);
+      border: 1px solid rgba(0,212,255,0.25);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+      animation: fadeSlideUp 0.6s ease both;
+    }
+    .hero-badge::before { content: '●'; animation: blink 1.5s infinite; font-size: 8px; }
+    @keyframes blink { 50% { opacity: 0; } }
+    .hero-text { max-width: 580px; position: relative; z-index: 1; }
+    .hero-text h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(36px, 5vw, 72px);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -1px;
+      margin-bottom: 20px;
+      animation: fadeSlideUp 0.7s 0.1s ease both;
+    }
+    .hero-text h1 .line1 { display: block; color: white; }
+    .hero-text h1 .line2 {
+      display: block;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-text p {
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.7;
+      margin-bottom: 36px;
+      animation: fadeSlideUp 0.7s 0.2s ease both;
+    }
+    .hero-buttons {
+      display: flex; gap: 16px; flex-wrap: wrap;
+      animation: fadeSlideUp 0.7s 0.3s ease both;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 28px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 1px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.25s;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #0099cc);
+      color: #000;
+      box-shadow: 0 4px 20px rgba(0,212,255,0.35);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0,212,255,0.5);
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--accent);
+      border: 1px solid rgba(0,212,255,0.4);
+    }
+    .btn-ghost:hover {
+      background: rgba(0,212,255,0.1);
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    /* Hero Stats */
+    .hero-stats {
+      display: flex; gap: 32px; margin-top: 48px;
+      animation: fadeSlideUp 0.7s 0.4s ease both;
+    }
+    .stat-item { text-align: left; }
+    .stat-num {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--accent);
+    }
+    .stat-label { font-size: 12px; color: var(--muted); letter-spacing: 1px; }
+
+    /* Hero Visual */
+    .hero-visual {
+      position: relative;
+      flex-shrink: 0;
+      animation: fadeSlideUp 0.7s 0.2s ease both;
+    }
+    .hero-img-wrap {
+      position: relative;
+      width: 420px;
+      animation: float 4s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-18px); }
+    }
+    .hero-img-wrap img {
+      width: 100%;
+      border-radius: 20px;
+      display: block;
+      filter: drop-shadow(0 20px 60px rgba(0,212,255,0.25));
+    }
+    /* Glow ring */
+    .hero-img-wrap::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2), transparent, var(--accent));
+      z-index: -1;
+      animation: rotateGlow 4s linear infinite;
+    }
+    @keyframes rotateGlow {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
+    }
+    /* Floating chips */
+    .float-chip {
+      position: absolute;
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      backdrop-filter: blur(10px);
+      white-space: nowrap;
+      box-shadow: var(--glow);
+    }
+    .chip-1 { top: 20px; right: -60px; animation: chipFloat 3s 0s ease-in-out infinite; }
+    .chip-2 { bottom: 40px; left: -70px; animation: chipFloat 3s 1s ease-in-out infinite; }
+    .chip-3 { top: 50%; right: -80px; transform: translateY(-50%); animation: chipFloat 3s 0.5s ease-in-out infinite; }
+    @keyframes chipFloat {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    .chip-3 { animation: chipFloat2 3s 0.5s ease-in-out infinite; }
+    @keyframes chipFloat2 {
+      0%,100% { transform: translateY(-50%); }
+      50% { transform: translateY(calc(-50% - 6px)); }
+    }
+    .chip-icon { font-size: 16px; vertical-align: middle; margin-right: 4px; }
+
+    @keyframes fadeSlideUp {
+      from { opacity:0; transform: translateY(20px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+
+    /* ══════════ SECTION SHARED ══════════ */
+    section { position: relative; z-index: 1; }
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .section-label::before {
+      content: '';
+      width: 20px; height: 2px;
+      background: var(--accent);
+    }
+    .section-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(26px, 3.5vw, 42px);
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+    .section-sub { color: var(--muted); font-size: 15px; line-height: 1.6; max-width: 480px; }
+
+    /* ══════════ CATEGORIES STRIP ══════════ */
+    #categories {
+      padding: 0 60px 60px;
+      overflow: hidden;
+    }
+    .cat-scroll {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      scrollbar-width: none;
+    }
+    .cat-scroll::-webkit-scrollbar { display: none; }
+    .cat-chip {
+      flex-shrink: 0;
+      padding: 10px 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.25s;
+      white-space: nowrap;
+    }
+    .cat-chip:hover, .cat-chip.active {
+      background: rgba(0,212,255,0.1);
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 0 15px rgba(0,212,255,0.15);
+    }
+
+    /* ══════════ PRODUCTS ══════════ */
+    #products {
+      padding: 80px 60px;
+      background: linear-gradient(180deg, transparent, rgba(8,15,32,0.7) 50%, transparent);
+    }
+    .products-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 48px;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    #productContainer {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 24px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+      position: relative;
+      animation: cardReveal 0.5s ease both;
+    }
+    @keyframes cardReveal {
+      from { opacity:0; transform: translateY(30px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 30px rgba(0,212,255,0.1);
+      border-color: rgba(0,212,255,0.4);
+    }
+    .card-img-wrap {
+      position: relative;
+      height: 180px;
+      overflow: hidden;
+      background: var(--card2);
+    }
+    .card-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s;
+      display: block;
+    }
+    .card:hover .card-img-wrap img { transform: scale(1.08); }
+    .card-badge {
+      position: absolute;
+      top: 10px; left: 10px;
+      background: linear-gradient(135deg, var(--accent2), #5500cc);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 3px 10px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+    .card-badge.sale { background: linear-gradient(135deg, var(--accent3), #cc3300); }
+    .card-wishlist {
+      position: absolute;
+      top: 10px; right: 10px;
+      background: rgba(5,12,26,0.7);
+      border: none;
+      color: var(--muted);
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.2s;
+      backdrop-filter: blur(10px);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .card-wishlist:hover, .card-wishlist.active { color: #ff4488; }
+    .card-body { padding: 16px; }
+    .card-cat {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .card-name {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+    .card-desc {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card-price {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--accent);
+    }
+    .card-price .old {
+      font-size: 12px;
+      color: var(--muted);
+      text-decoration: line-through;
+      margin-left: 6px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 400;
+    }
+    .card-btn {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,212,255,0.4);
+      background: rgba(0,212,255,0.08);
+      color: var(--accent);
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .card-btn:hover {
+      background: var(--accent);
+      color: #000;
+      box-shadow: 0 0 15px rgba(0,212,255,0.4);
+    }
+    .card-stars { color: #f59e0b; font-size: 11px; margin-bottom: 8px; }
+    .load-more-wrap { text-align: center; margin-top: 48px; }
+
+    /* ══════════ FEATURES ══════════ */
+    #features {
+      padding: 80px 60px;
+      background: var(--bg2);
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+      margin-top: 48px;
+    }
+    .feature-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .feature-card:hover { transform: translateY(-6px); border-color: rgba(0,212,255,0.3); }
+    .feature-card:hover::before { opacity: 1; }
+    .feature-icon {
+      font-size: 32px;
+      margin-bottom: 16px;
+      display: block;
+    }
+    .feature-card h3 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+    .feature-card p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+    /* ══════════ ABOUT ══════════ */
+    #about {
+      padding: 80px 60px;
+      display: flex;
+      align-items: center;
+      gap: 80px;
+      flex-wrap: wrap;
+    }
+    .about-text { flex: 1; min-width: 280px; }
+    .about-visual { flex: 1; min-width: 280px; }
+    .about-img-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .about-img-grid img {
+      width: 100%;
+      border-radius: 12px;
+      height: 160px;
+      object-fit: cover;
+      filter: brightness(0.8);
+      transition: all 0.3s;
+    }
+    .about-img-grid img:hover { filter: brightness(1); transform: scale(1.02); }
+    .about-img-grid img:first-child {
+      grid-column: span 2;
+      height: 200px;
+    }
+    .about-bullets { margin-top: 28px; display: flex; flex-direction: column; gap: 14px; }
+    .about-bullet {
+      display: flex; align-items: flex-start; gap: 12px;
+    }
+    .bullet-icon {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      background: rgba(0,212,255,0.1);
+      border: 1px solid rgba(0,212,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .bullet-text strong { display: block; font-size: 14px; margin-bottom: 2px; }
+    .bullet-text span { font-size: 12px; color: var(--muted); }
+
+    /* ══════════ TESTIMONIALS ══════════ */
+    #testimonials {
+      padding: 80px 60px;
+      background: var(--bg2);
+      overflow: hidden;
+    }
+    .testi-track-wrap { overflow: hidden; margin-top: 48px; }
+    .testi-track {
+      display: flex;
+      gap: 24px;
+      animation: scrollLeft 28s linear infinite;
+      width: max-content;
+    }
+    .testi-track:hover { animation-play-state: paused; }
+    @keyframes scrollLeft {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .testi-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      width: 300px;
+      flex-shrink: 0;
+    }
+    .testi-stars { color: #f59e0b; margin-bottom: 12px; }
+    .testi-text { font-size: 13px; color: var(--muted); line-height: 1.7; margin-bottom: 16px; font-style: italic; }
+    .testi-author { display: flex; align-items: center; gap: 10px; }
+    .testi-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: #000;
+    }
+    .testi-name { font-size: 13px; font-weight: 700; }
+    .testi-loc { font-size: 11px; color: var(--muted); }
+
+    /* ══════════ CONTACT ══════════ */
+    #contact {
+      padding: 80px 60px;
+      display: flex;
+      gap: 60px;
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
+    .contact-info { flex: 1; min-width: 260px; }
+    .contact-form-wrap { flex: 1.2; min-width: 280px; }
+    .contact-item {
+      display: flex; align-items: flex-start;
+      gap: 14px; margin-bottom: 24px;
+    }
+    .contact-icon {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      background: rgba(0,212,255,0.1);
+      border: 1px solid rgba(0,212,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0;
+    }
+    .contact-item strong { display: block; font-size: 13px; color: var(--text); margin-bottom: 3px; }
+    .contact-item span { font-size: 12px; color: var(--muted); }
+    .form-row { display: flex; gap: 16px; flex-wrap: wrap; }
+    .form-group { flex: 1; min-width: 180px; margin-bottom: 16px; }
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px;
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      font-size: 14px;
+      transition: all 0.25s;
+      outline: none;
+      resize: vertical;
+    }
+    .form-group input::placeholder,
+    .form-group textarea::placeholder { color: var(--muted); }
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: var(--accent);
+      background: rgba(0,212,255,0.04);
+      box-shadow: 0 0 0 3px rgba(0,212,255,0.1);
+    }
+    .form-group textarea { min-height: 120px; }
+
+    /* ══════════ FOOTER ══════════ */
+    footer {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      padding: 48px 60px 24px;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+    .footer-brand p { font-size: 13px; color: var(--muted); line-height: 1.7; margin-top: 12px; max-width: 260px; }
+    .footer-socials { display: flex; gap: 10px; margin-top: 20px; }
+    .social-btn {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+    .social-btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+    .footer-col h4 {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .footer-col a {
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-col a:hover { color: var(--accent); }
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .footer-bottom p { font-size: 12px; color: var(--muted); }
+    .footer-badges { display: flex; gap: 8px; }
+    .badge {
+      background: rgba(0,212,255,0.08);
+      border: 1px solid rgba(0,212,255,0.15);
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 3px 10px;
+      border-radius: 4px;
+    }
+
+    /* TOAST */
+    #toast {
+      position: fixed;
+      bottom: 30px; right: 30px;
+      background: var(--card2);
+      border: 1px solid var(--accent);
+      border-radius: 12px;
+      padding: 14px 20px;
+      font-size: 14px;
+      color: var(--text);
+      box-shadow: var(--glow);
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all 0.4s;
+      z-index: 9999;
+      max-width: 280px;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+
+    /* CART COUNTER */
+    .cart-count {
+      position: absolute;
+      top: -6px; right: -6px;
+      background: var(--accent3);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .cart-btn-wrap { position: relative; display: inline-flex; }
+
+    /* ══════════ RESPONSIVE ══════════ */
+    @media (max-width: 900px) {
+      header { padding: 0 24px; }
+      nav { display: none; position: fixed; top: 70px; left: 0; right: 0;
+        background: rgba(5,12,26,0.97);
+        border-bottom: 1px solid var(--border);
+        padding: 20px 24px; }
+      nav.open { display: block; }
+      nav ul { flex-direction: column; gap: 0; }
+      nav a { display: block; padding: 12px 8px; border-bottom: 1px solid var(--border); }
+      .hamburger { display: flex; }
+      #home { padding: 120px 24px 60px; flex-direction: column; text-align: center; }
+      .hero-buttons { justify-content: center; }
+      .hero-stats { justify-content: center; }
+      .hero-img-wrap { width: 100%; max-width: 380px; }
+      .chip-1, .chip-2, .chip-3 { display: none; }
+      #categories, #products, #features, #about, #contact { padding-left: 24px; padding-right: 24px; }
+      #about { flex-direction: column; gap: 40px; }
+      footer { padding: 40px 24px 20px; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 560px) {
+      .footer-grid { grid-template-columns: 1fr; }
+      .hero-stats { flex-wrap: wrap; gap: 20px; }
+      #testimonials { padding-left: 24px; padding-right: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<header id="mainHeader">
+  <a href="#home" class="logo"><span class="logo-bolt">⚡</span> ElectroHub</a>
+  <nav id="mainNav">
+    <ul>
+      <li><a href="#home" class="nav-link active">Home</a></li>
+      <li><a href="#products" class="nav-link">Products</a></li>
+      <li><a href="#features" class="nav-link">Features</a></li>
+      <li><a href="#about" class="nav-link">About</a></li>
+      <li><a href="#contact" class="nav-link">Contact</a></li>
+      <li>
+        <div class="cart-btn-wrap">
+          <a href="#products" class="btn btn-primary" style="padding:8px 18px;font-size:13px;">
+            🛒 Cart
+          </a>
+          <span class="cart-count" id="cartCount">0</span>
+        </div>
+      </li>
+    </ul>
+  </nav>
+  <div class="hamburger" id="hamburger">
+    <span></span><span></span><span></span>
+  </div>
+</header>
+
+<!-- ══ HERO ══ -->
+<section id="home">
+  <div class="hero-text">
+    <div class="hero-badge">🚀 New Arrivals 2026</div>
+    <h1>
+      <span class="line1">Next Gen</span>
+      <span class="line2">Electronics</span>
+    </h1>
+    <p>Explore cutting-edge gadgets, smart devices, and futuristic technology — crafted for the way you live, work, and play.</p>
+    <div class="hero-buttons">
+      <button class="btn btn-primary" onclick="scrollToSection('products')">Shop Now →</button>
+      <button class="btn btn-ghost" onclick="scrollToSection('about')">Learn More</button>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-num">500+</div>
+        <div class="stat-label">Products</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">98%</div>
+        <div class="stat-label">Satisfied</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">24/7</div>
+        <div class="stat-label">Support</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-img-wrap">
+      <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=80" alt="Electronics" />
+      <div class="float-chip chip-1"><span class="chip-icon">📦</span> Free Shipping</div>
+      <div class="float-chip chip-2"><span class="chip-icon">⭐</span> 4.9 Rating</div>
+      <div class="float-chip chip-3"><span class="chip-icon">🔒</span> Secure Pay</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CATEGORY STRIP ══ -->
+<div id="categories">
+  <div class="cat-scroll" id="catScroll">
+    <div class="cat-chip active" data-cat="all">🔥 All Products</div>
+    <div class="cat-chip" data-cat="smartphone">📱 Smartphones</div>
+    <div class="cat-chip" data-cat="laptop">💻 Laptops</div>
+    <div class="cat-chip" data-cat="headphones">🎧 Headphones</div>
+    <div class="cat-chip" data-cat="keyboard">⌨️ Keyboards</div>
+    <div class="cat-chip" data-cat="camera">📷 Cameras</div>
+    <div class="cat-chip" data-cat="tablet">📟 Tablets</div>
+    <div class="cat-chip" data-cat="speaker">🔊 Speakers</div>
+    <div class="cat-chip" data-cat="monitor">🖥️ Monitors</div>
+    <div class="cat-chip" data-cat="gaming">🎮 Gaming</div>
+  </div>
+</div>
+
+<!-- ══ PRODUCTS ══ -->
+<section id="products">
+  <div class="products-header">
+    <div>
+      <div class="section-label">Shop</div>
+      <div class="section-title">Featured Products</div>
+      <p class="section-sub">Handpicked tech for every need and budget.</p>
+    </div>
+  </div>
+  <div id="productContainer"></div>
+  <div class="load-more-wrap">
+    <button class="btn btn-ghost" id="loadMoreBtn" onclick="loadMore()">Load More Products ↓</button>
+  </div>
+</section>
+
+<!-- ══ FEATURES ══ -->
+<section id="features">
+  <div class="section-label">Why Us</div>
+  <div class="section-title">Built For You</div>
+  <p class="section-sub">Every feature designed around your experience.</p>
+  <div class="features-grid">
+    <div class="feature-card">
+      <span class="feature-icon">🚀</span>
+      <h3>Lightning Delivery</h3>
+      <p>Get your gear delivered in as fast as 24 hours. We partner with the best logistics networks nationwide.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🔒</span>
+      <h3>Secure Checkout</h3>
+      <p>256-bit SSL encryption on every transaction. Your payment details are never stored or shared.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🔄</span>
+      <h3>Easy Returns</h3>
+      <p>Not happy? Return any product within 30 days for a full refund, no questions asked.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🛠️</span>
+      <h3>Expert Support</h3>
+      <p>Our tech specialists are available 24/7 via chat, phone, or email to help with any issue.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🏷️</span>
+      <h3>Best Price Promise</h3>
+      <p>Find it cheaper anywhere? We'll match it — plus give you an extra 5% off.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">⭐</span>
+      <h3>Verified Reviews</h3>
+      <p>All ratings come from verified buyers only. Real opinions you can actually trust.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ABOUT ══ -->
+<section id="about">
+  <div class="about-text">
+    <div class="section-label">About ElectroHub</div>
+    <div class="section-title">Powering the Future of Tech</div>
+    <p class="section-sub" style="margin-top:12px;">Founded in 2018, ElectroHub has grown to become one of the most trusted electronics destinations. We curate only the best products from top global brands.</p>
+    <div class="about-bullets">
+      <div class="about-bullet">
+        <div class="bullet-icon">🌍</div>
+        <div class="bullet-text">
+          <strong>Global Reach</strong>
+          <span>Shipping to 60+ countries worldwide with no hidden fees.</span>
+        </div>
+      </div>
+      <div class="about-bullet">
+        <div class="bullet-icon">✅</div>
+        <div class="bullet-text">
+          <strong>Quality Assured</strong>
+          <span>Every product tested and verified before it reaches you.</span>
+        </div>
+      </div>
+      <div class="about-bullet">
+        <div class="bullet-icon">♻️</div>
+        <div class="bullet-text">
+          <strong>Eco Conscious</strong>
+          <span>Carbon-neutral packaging and responsible disposal programs.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="about-visual">
+    <div class="about-img-grid">
+      <img src="https://images.unsplash.com/photo-1550009158-9ebf69173e03?w=600&q=80" alt="Tech warehouse" />
+      <img src="https://images.unsplash.com/photo-1601524909162-ae8725290836?w=300&q=80" alt="Team" />
+      <img src="https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=300&q=80" alt="Laptop" />
+    </div>
+  </div>
+</section>
+
+<!-- ══ TESTIMONIALS ══ -->
+<section id="testimonials">
+  <div style="text-align:center;margin-bottom:8px;">
+    <div class="section-label" style="justify-content:center;margin-bottom:8px;">Testimonials</div>
+    <div class="section-title">Loved by Thousands</div>
+  </div>
+  <div class="testi-track-wrap">
+    <div class="testi-track" id="testiTrack"></div>
+  </div>
+</section>
+
+<!-- ══ CONTACT ══ -->
+<section id="contact">
+  <div class="contact-info">
+    <div class="section-label">Get In Touch</div>
+    <div class="section-title">Contact Us</div>
+    <p class="section-sub" style="margin-top:12px;margin-bottom:32px;">We'd love to hear from you — whether it's a question, feedback, or partnership inquiry.</p>
+    <div class="contact-item">
+      <div class="contact-icon">📍</div>
+      <div>
+        <strong>Address</strong>
+        <span>Tech Park, Silicon Valley, CA 94025</span>
+      </div>
+    </div>
+    <div class="contact-item">
+      <div class="contact-icon">📧</div>
+      <div>
+        <strong>Email</strong>
+        <span>hello@electrohub.com</span>
+      </div>
+    </div>
+    <div class="contact-item">
+      <div class="contact-icon">📞</div>
+      <div>
+        <strong>Phone</strong>
+        <span>+1 (800) 555-ELEC</span>
+      </div>
+    </div>
+    <div class="contact-item">
+      <div class="contact-icon">🕐</div>
+      <div>
+        <strong>Hours</strong>
+        <span>Mon–Sat: 9AM – 9PM EST</span>
+      </div>
+    </div>
+  </div>
+  <div class="contact-form-wrap">
+    <form onsubmit="submitForm(event)" style="background:var(--card);border:1px solid var(--border);border-radius:20px;padding:32px;">
+      <div class="form-row">
+        <div class="form-group">
+          <label>First Name</label>
+          <input type="text" placeholder="John" required />
+        </div>
+        <div class="form-group">
+          <label>Last Name</label>
+          <input type="text" placeholder="Doe" required />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" placeholder="john@example.com" required />
+      </div>
+      <div class="form-group">
+        <label>Subject</label>
+        <input type="text" placeholder="Product enquiry, returns, etc." />
+      </div>
+      <div class="form-group">
+        <label>Message</label>
+        <textarea placeholder="Tell us how we can help..."></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">Send Message →</button>
+    </form>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo" style="font-size:18px;">⚡ ElectroHub</div>
+      <p>Your trusted destination for next-generation electronics. Quality, speed, and innovation — delivered to your door.</p>
+      <div class="footer-socials">
+        <a href="#" class="social-btn">𝕏</a>
+        <a href="#" class="social-btn">in</a>
+        <a href="#" class="social-btn">📷</a>
+        <a href="#" class="social-btn">▶</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Shop</h4>
+      <ul>
+        <li><a href="#products">Smartphones</a></li>
+        <li><a href="#products">Laptops</a></li>
+        <li><a href="#products">Headphones</a></li>
+        <li><a href="#products">Cameras</a></li>
+        <li><a href="#products">Gaming</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#contact">Careers</a></li>
+        <li><a href="#contact">Press</a></li>
+        <li><a href="#contact">Partners</a></li>
+        <li><a href="#contact">Blog</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <ul>
+        <li><a href="#contact">Contact Us</a></li>
+        <li><a href="#contact">Returns</a></li>
+        <li><a href="#contact">Warranty</a></li>
+        <li><a href="#contact">Privacy Policy</a></li>
+        <li><a href="#contact">Terms</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 ElectroHub. All rights reserved.</p>
+    <div class="footer-badges">
+      <span class="badge">SSL SECURED</span>
+      <span class="badge">PCI COMPLIANT</span>
+      <span class="badge">GDPR READY</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ══ TOAST ══ -->
+<div id="toast">✅ Added to cart!</div>
+
+<script>
+  // ─── PRODUCT DATA ───────────────────────────────────────────────────────────
+  const products = [
+    { id:1, name:'iPhone 16 Pro', cat:'smartphone', price:1199, old:1299, badge:'New', img:'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400&q=80', desc:'6.3" ProMotion OLED, A18 chip, titanium build.', stars:5 },
+    { id:2, name:'MacBook Pro 16"', cat:'laptop', price:2499, old:2699, badge:'Hot', img:'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&q=80', desc:'M4 Pro chip, 24GB RAM, Liquid Retina XDR.', stars:5 },
+    { id:3, name:'Sony WH-1000XM6', cat:'headphones', price:349, old:399, badge:'Sale', img:'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&q=80', desc:'Industry-leading ANC, 40h battery, LDAC.', stars:5 },
+    { id:4, name:'Samsung Galaxy S25', cat:'smartphone', price:999, old:1099, badge:'New', img:'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=400&q=80', desc:'Dynamic AMOLED 2X, 200MP camera, 45W fast charge.', stars:4 },
+    { id:5, name:'Dell XPS 15', cat:'laptop', price:1799, old:1999, badge:'', img:'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=400&q=80', desc:'OLED display, Intel Core i9, NVIDIA RTX 4070.', stars:4 },
+    { id:6, name:'Mechanical Keyboard', cat:'keyboard', price:159, old:199, badge:'Sale', img:'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=400&q=80', desc:'Cherry MX switches, RGB backlit, TKL layout.', stars:4 },
+    { id:7, name:'Sony A7 V Camera', cat:'camera', price:3299, old:3499, badge:'', img:'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&q=80', desc:'61MP full-frame, 4K120p video, real-time AF.', stars:5 },
+    { id:8, name:'iPad Pro 13"', cat:'tablet', price:1299, old:1399, badge:'New', img:'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400&q=80', desc:'Ultra Retina XDR OLED, M4 chip, Apple Pencil Pro.', stars:5 },
+    { id:9, name:'Sonos Era 300', cat:'speaker', price:449, old:499, badge:'', img:'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400&q=80', desc:'Spatial audio, Dolby Atmos, 360° sound.', stars:4 },
+    { id:10, name:'LG UltraGear 27"', cat:'monitor', price:699, old:799, badge:'Sale', img:'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400&q=80', desc:'4K OLED, 240Hz, 0.03ms, G-Sync & FreeSync.', stars:5 },
+    { id:11, name:'PS5 Pro', cat:'gaming', price:699, old:799, badge:'Hot', img:'https://images.unsplash.com/photo-1607853202273-797f1c22a38e?w=400&q=80', desc:'8K gaming ready, 2TB SSD, DualSense Edge.', stars:5 },
+    { id:12, name:'Google Pixel 9 Pro', cat:'smartphone', price:1099, old:1199, badge:'', img:'https://images.unsplash.com/photo-1574944985070-8f3ebc6b79d2?w=400&q=80', desc:'Tensor G4, 50MP triple camera, 7 years updates.', stars:4 },
+    { id:13, name:'Razer Blade 16', cat:'laptop', price:3299, old:3599, badge:'', img:'https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=400&q=80', desc:'RTX 4090, 240Hz Mini-LED, per-key RGB.', stars:5 },
+    { id:14, name:'AirPods Max 2', cat:'headphones', price:549, old:599, badge:'New', img:'https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?w=400&q=80', desc:'H2 chip, Adaptive ANC, USB-C, 40h battery.', stars:4 },
+    { id:15, name:'ASUS ROG Keyboard', cat:'keyboard', price:219, old:249, badge:'', img:'https://images.unsplash.com/photo-1672289949682-e47a1e1cdbc2?w=400&q=80', desc:'Optical switches, hot-swap, per-key ARGB.', stars:4 },
+    { id:16, name:'DJI Osmo Pocket 3', cat:'camera', price:519, old:569, badge:'', img:'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400&q=80', desc:'4K/120fps, 1" CMOS sensor, gimbal stabilized.', stars:5 },
+    { id:17, name:'Amazon Echo Hub', cat:'speaker', price:179, old:199, badge:'Sale', img:'https://images.unsplash.com/photo-1512446733611-9099a758e3f2?w=400&q=80', desc:'Smart home control panel, 8" display, Alexa.', stars:4 },
+    { id:18, name:'Samsung Odyssey G9', cat:'monitor', price:1299, old:1499, badge:'Hot', img:'https://images.unsplash.com/photo-1586985289688-ca3cf47d3e6e?w=400&q=80', desc:'49" DQHD curved OLED, 240Hz, 1ms, HDMI 2.1.', stars:5 },
+    { id:19, name:'Xbox Series X', cat:'gaming', price:499, old:599, badge:'Sale', img:'https://images.unsplash.com/photo-1621259182978-fbf93132d53d?w=400&q=80', desc:'12 TFLOPS, 4K@120fps, 1TB NVMe, Quick Resume.', stars:4 },
+    { id:20, name:'OnePlus 13', cat:'smartphone', price:899, old:999, badge:'', img:'https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=400&q=80', desc:'Snapdragon 8 Elite, 100W fast charge, Hasselblad camera.', stars:4 },
+  ];
+
+  let cartCount = 0;
+  let displayCount = 8;
+  let activeCategory = 'all';
+
+  function getFiltered() {
+    return activeCategory === 'all' ? products : products.filter(p => p.cat === activeCategory);
+  }
+
+  function renderProducts() {
+    const container = document.getElementById('productContainer');
+    const filtered = getFiltered().slice(0, displayCount);
+    container.innerHTML = '';
+    filtered.forEach((p, i) => {
+      const stars = '★'.repeat(p.stars) + '☆'.repeat(5 - p.stars);
+      const badgeHtml = p.badge ? `<div class="card-badge ${p.badge === 'Sale' ? 'sale' : ''}">${p.badge}</div>` : '';
+      const oldHtml = p.old ? `<span class="old">$${p.old}</span>` : '';
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.style.animationDelay = (i * 0.05) + 's';
+      card.innerHTML = `
+        <div class="card-img-wrap">
+          <img src="${p.img}" alt="${p.name}" loading="lazy"
+            onerror="this.src='https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&q=80'" />
+          ${badgeHtml}
+          <button class="card-wishlist" onclick="toggleWish(this)" title="Wishlist">♡</button>
+        </div>
+        <div class="card-body">
+          <div class="card-cat">${p.cat}</div>
+          <div class="card-stars">${stars} <span style="color:var(--muted);font-size:11px;">(${Math.floor(Math.random()*200+50)})</span></div>
+          <div class="card-name">${p.name}</div>
+          <div class="card-desc">${p.desc}</div>
+          <div class="card-footer">
+            <div class="card-price">$${p.price} ${oldHtml}</div>
+            <button class="card-btn" onclick="addToCart('${p.name}')" title="Add to cart">+</button>
+          </div>
+        </div>`;
+      container.appendChild(card);
+    });
+    document.getElementById('loadMoreBtn').style.display =
+      getFiltered().length > displayCount ? 'inline-flex' : 'none';
+  }
+
+  function loadMore() {
+    displayCount += 8;
+    renderProducts();
+  }
+
+  function addToCart(name) {
+    cartCount++;
+    document.getElementById('cartCount').textContent = cartCount;
+    showToast(`🛒 ${name} added to cart!`);
+  }
+
+  function toggleWish(btn) {
+    btn.classList.toggle('active');
+    btn.textContent = btn.classList.contains('active') ? '♥' : '♡';
+    if (btn.classList.contains('active')) showToast('💖 Added to wishlist!');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  // ─── CATEGORY FILTER ────────────────────────────────────────────────────────
+  document.getElementById('catScroll').addEventListener('click', e => {
+    const chip = e.target.closest('.cat-chip');
+    if (!chip) return;
+    document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    activeCategory = chip.dataset.cat;
+    displayCount = 8;
+    renderProducts();
+  });
+
+  // ─── TESTIMONIALS ───────────────────────────────────────────────────────────
+  const testimonials = [
+    { name:'Arjun Patel', loc:'Mumbai, India', text:'Ordered a laptop and it arrived the next day. Packaging was perfect and the product is exactly as described. Will definitely be a repeat customer!', stars:5, initials:'AP' },
+    { name:'Sarah Chen', loc:'San Francisco, USA', text:'Best electronics store online. Their price match guarantee saved me $150 on my new monitor. Customer service was super helpful too.', stars:5, initials:'SC' },
+    { name:'Marcus Webb', loc:'London, UK', text:'The Sony headphones I bought are absolutely incredible. ElectroHub had the best price I could find anywhere and delivery was lightning fast.', stars:5, initials:'MW' },
+    { name:'Priya Singh', loc:'Delhi, India', text:'Returned a faulty item without any hassle. Got a full refund in 48 hours. Their support team really cares about customers.', stars:4, initials:'PS' },
+    { name:'Luca Ferrari', loc:'Milan, Italy', text:'Amazing selection of gaming peripherals. Got my setup complete in one order. Quality is top notch, exactly what I was looking for.', stars:5, initials:'LF' },
+    { name:'Yuki Tanaka', loc:'Tokyo, Japan', text:'Shopping here is seamless. The website is fast, checkout is simple, and my order arrived ahead of schedule. Highly recommend!', stars:5, initials:'YT' },
+  ];
+  const track = document.getElementById('testiTrack');
+  [...testimonials, ...testimonials].forEach(t => {
+    const el = document.createElement('div');
+    el.className = 'testi-card';
+    el.innerHTML = `
+      <div class="testi-stars">${'★'.repeat(t.stars)}</div>
+      <div class="testi-text">"${t.text}"</div>
+      <div class="testi-author">
+        <div class="testi-avatar">${t.initials}</div>
+        <div>
+          <div class="testi-name">${t.name}</div>
+          <div class="testi-loc">${t.loc}</div>
+        </div>
+      </div>`;
+    track.appendChild(el);
+  });
+
+  // ─── NAV ────────────────────────────────────────────────────────────────────
+  function scrollToSection(id) {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // Active nav on scroll
+  const sections = ['home','products','features','about','testimonials','contact'];
+  window.addEventListener('scroll', () => {
+    const scrollY = window.scrollY;
+    const header = document.getElementById('mainHeader');
+    header.classList.toggle('scrolled', scrollY > 50);
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const top = el.offsetTop - 100;
+      const bottom = top + el.offsetHeight;
+      if (scrollY >= top && scrollY < bottom) {
+        document.querySelectorAll('.nav-link').forEach(a => {
+          a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  });
+
+  // Hamburger
+  const ham = document.getElementById('hamburger');
+  const nav = document.getElementById('mainNav');
+  ham.addEventListener('click', () => {
+    ham.classList.toggle('open');
+    nav.classList.toggle('open');
+  });
+  nav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    ham.classList.remove('open');
+    nav.classList.remove('open');
+  }));
+
+  // ─── CONTACT FORM ───────────────────────────────────────────────────────────
+  function submitForm(e) {
+    e.preventDefault();
+    showToast('✉️ Message sent! We\'ll reply soon.');
+    e.target.reset();
+  }
+
+  // ─── INIT ───────────────────────────────────────────────────────────────────
+  renderProducts();
+</script>
+</body>
+</html>
