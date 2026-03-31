@@ -1,0 +1,225 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500;700&family=VT323&display=swap');
+
+:root {
+    --p: #00f2ff;
+    /* Primary Neon Cyan */
+    --p-dim: rgba(0, 242, 255, 0.2);
+    --p-glow: 0 0 15px rgba(0, 242, 255, 0.7);
+    --bg: #03080a;
+    --red: #ff3c3c;
+    --warn: #ffcc00;
+    --font-ui: 'Fira Code', monospace;
+    --font-main: 'VT323', monospace;
+    --screen-size: 2.2rem;
+}
+
+* {
+    box-sizing: border-box;
+    outline: none;
+}
+
+body {
+    margin: 0;
+    background: #000;
+    overflow: hidden;
+    color: var(--p);
+    font-family: var(--font-main);
+    user-select: none;
+    height: 100vh;
+}
+
+#wrapper {
+    position: relative;
+    z-index: 10;
+    width: 100vw;
+    height: 100vh;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+    border: 15px solid #111;
+}
+
+/* THE HARDWARE LOOK */
+.crt-distortion {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%),
+        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    background-size: 100% 3px, 3px 100%;
+    z-index: 100;
+    pointer-events: none;
+}
+
+.scanline-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, transparent, transparent 50%, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.1));
+    background-size: 100% 4px;
+    z-index: 101;
+    pointer-events: none;
+    animation: moveScanlines 10s linear infinite;
+}
+
+@keyframes moveScanlines {
+    from {
+        background-position: 0 0;
+    }
+
+    to {
+        background-position: 0 100%;
+    }
+}
+
+#sys-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--p-dim);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+}
+
+#terminal-interface {
+    flex: 1;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    padding-right: 10px;
+}
+
+#terminal-interface::-webkit-scrollbar {
+    display: none;
+}
+
+#output-buffer {
+    font-size: var(--screen-size);
+    line-height: 1.1;
+    text-shadow: var(--p-glow);
+    filter: url(#crtText);
+}
+
+.input-line {
+    display: flex;
+    margin-top: 15px;
+    border-top: 1px solid var(--p-dim);
+    padding-top: 15px;
+}
+
+#prompt-label {
+    font-size: var(--screen-size);
+    margin-right: 15px;
+    color: var(--warn);
+}
+
+#terminal-input {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-family: var(--font-main);
+    font-size: var(--screen-size);
+    width: 100%;
+    caret-color: var(--p);
+}
+
+#footer-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    border-top: 2px solid var(--p-dim);
+    padding-top: 15px;
+}
+
+.os-btn {
+    background: transparent;
+    border: 1px solid var(--p);
+    color: var(--p);
+    padding: 5px 15px;
+    font-family: var(--font-ui);
+    cursor: pointer;
+    margin-right: 10px;
+    transition: 0.3s;
+}
+
+.os-btn:hover {
+    background: var(--p);
+    color: #000;
+}
+
+/* SYSTEM EFFECTS */
+.blink-fast {
+    animation: blink 0.3s steps(1) infinite;
+}
+
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+.loading-container {
+    width: 500px;
+    height: 25px;
+    border: 1px solid var(--p);
+    margin: 20px 0;
+}
+
+.loading-fill {
+    height: 100%;
+    background: var(--p);
+    width: 0;
+    box-shadow: var(--p-glow);
+}
+
+.log-critical {
+    color: var(--red);
+    font-weight: bold;
+    animation: glitchText 0.2s infinite;
+}
+
+@keyframes glitchText {
+    0% {
+        transform: translateX(2px);
+    }
+
+    50% {
+        transform: translateX(-2px);
+        filter: hue-rotate(90deg);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+#matrix-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    opacity: 0.05;
+    pointer-events: none;
+    z-index: 1;
+}
+
+@media (max-width: 900px) {
+    :root {
+        --screen-size: 1.4rem;
+    }
+
+    #wrapper {
+        padding: 10px;
+    }
+
+    #sys-header {
+        font-size: 0.8rem;
+    }
+}
