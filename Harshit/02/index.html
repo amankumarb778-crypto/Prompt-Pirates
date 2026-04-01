@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Journey to Midnight | India's Freedom</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <style>
+        :root {
+            --primary: #FF9933; 
+            --white: #FFFFFF;
+            --secondary: #138808; 
+            --bg-base: #05050a;
+            --glass-bg: rgba(15, 15, 20, 0.55);
+            --glass-border: rgba(255, 255, 255, 0.15);
+        }
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            overflow: hidden;
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--white);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .cinzel { font-family: 'Cinzel', serif; }
+
+        /* Film Grain & Vignette Overlay */
+        #film-overlay {
+            position: fixed; inset: 0; pointer-events: none; z-index: 5;
+            background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.8) 100%),
+                        url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)" opacity="0.05"/%3E%3C/svg%3E');
+            opacity: 0.8;
+            mix-blend-mode: overlay;
+        }
+
+        /* 3D Canvas */
+        #webgl-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+        
+        /* Ambient Gradient */
+        #gradient-overlay {
+            position: absolute; inset: 0; z-index: 1;
+            background: radial-gradient(circle at center, transparent 0%, rgba(5,5,10,0.8) 100%);
+            pointer-events: none; transition: background 2s ease;
+        }
+
+        #ui-layer {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 10;
+            pointer-events: none; display: flex; flex-direction: column; justify-content: space-between;
+        }
+        .pointer-events-auto { pointer-events: auto; }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        /* Sidebar & Mobile Layout */
+        #sidebar { display: flex; flex-direction: column; pointer-events: auto; transition: all 0.5s ease; z-index: 20; }
+        
+        .timeline-scroll {
+            display: flex; overflow-x: auto; overflow-y: hidden; padding: 0 1rem 10px 1rem;
+            scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+        }
+        
+        #timeline-container {
+            flex: 1;
+            width: 100%;
+        }
+        
+        @media (max-width: 768px) {
+            #sidebar {
+                position: fixed; bottom: 0; left: 0; width: 100%; height: auto;
+                border-top: 1px solid var(--glass-border); border-right: none; border-radius: 24px 24px 0 0; padding: 1rem 0;
+                background: rgba(10, 10, 15, 0.85); /* Darker on mobile for readability */
+                backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            }
+            .timeline-scroll {
+                display: flex; overflow-x: auto; overflow-y: hidden; padding: 0 1rem 10px 1rem;
+                scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+            }
+            /* 75% width on mobile so the edge of the next card hints at swiping */
+            .timeline-item { flex: 0 0 75%; margin-right: 1rem; scroll-snap-align: center; min-height: 200px; }
+        }
+        @media (min-width: 769px) {
+            #sidebar {
+                width: 28rem; height: auto; max-height: calc(100vh - 200px); border-right: 1px solid var(--glass-border);
+                mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+                -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+                padding: 2rem !important;
+                overflow-y: auto;
+                overflow-x: hidden;
+            }
+            .timeline-scroll {
+                display: flex !important;
+                flex-direction: column !important;
+                overflow: visible !important;
+                padding: 0 !important;
+            }
+            .timeline-item {
+                flex: 0 0 auto !important;
+                margin-right: 0 !important;
+                margin-bottom: 1.5rem;
+            }
+        }
+
+        /* Hero Event Display Card */
+        #hero-event-display {
+            opacity: 0; transform: translateY(20px) scale(0.95);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: auto;
+            max-width: 100%; width: auto;
+        }
+        #hero-event-display.visible { opacity: 1; transform: translateY(0) scale(1); }
+        .event-image-container { 
+            position: relative; overflow: hidden; border-radius: 12px 12px 0 0;
+            background: linear-gradient(135deg, rgba(255,153,51,0.1) 0%, rgba(19,136,8,0.1) 100%);
+            min-height: 400px;
+        }
+        .event-image-container::after {
+            content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 60%;
+            background: linear-gradient(to top, var(--glass-bg), transparent);
+            z-index: 2;
+        }
+        .event-image-container::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.4) 100%);
+            z-index: 1;
+        }
+        #hero-image { 
+            width: 100%; height: 400px; object-fit: cover; transition: transform 10s ease, filter 0.6s ease;
+            filter: brightness(0.95) contrast(1.1);
+            position: relative;
+            z-index: 0;
+        }
+        #hero-event-display.visible #hero-image { 
+            transform: scale(1.05);
+            filter: brightness(1) contrast(1.15);
+        }
+        #hero-image:hover {
+            filter: brightness(1.05) contrast(1.2);
+        }
+        
+        @media (max-width: 768px) { #hero-image { height: 280px; } /* Smaller hero image on mobile to fit screen */
+            #hero-event-display { width: 95%; max-width: 400px; }
+            /* Mobile flex positioning spacer */
+            .mobile-spacer { padding-bottom: 400px; } 
+        }
+
+        /* Image Loading States & Animations */
+        #hero-image {
+            background: linear-gradient(90deg, rgba(255,255,255,0.1) 25%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.1) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+        }
+        #hero-image[src]:not([data-loaded="true"]) {
+            animation: shimmer 2s infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        .event-image-container img[src]:not([data-loaded="true"]) {
+            position: absolute;
+            opacity: 0;
+        }
+
+        /* Scrollbar */
+        .timeline-scroll::-webkit-scrollbar { width: 4px; height: 4px; }
+        .timeline-scroll::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); }
+        .timeline-scroll::-webkit-scrollbar-thumb { background: rgba(255, 153, 51, 0.5); border-radius: 4px; }
+
+        #sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+        #sidebar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            margin: 10px 0;
+        }
+        #sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255, 153, 51, 0.4);
+            border-radius: 4px;
+        }
+        #sidebar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 153, 51, 0.7);
+        }
+
+        /* Cinematic Blocks */
+        .block-container { 
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
+            border-color: rgba(255,255,255,0.1);
+            background: linear-gradient(135deg, rgba(255,153,51,0.05) 0%, rgba(19,136,8,0.05) 100%);
+            cursor: pointer;
+        }
+        .block-bg { 
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); 
+            filter: grayscale(80%) contrast(1.2);
+            animation: imageLoad 0.6s ease-out;
+        }
+        @keyframes imageLoad {
+            0% { opacity: 0; filter: grayscale(100%) contrast(1) blur(5px); }
+            100% { opacity: 0.4; filter: grayscale(80%) contrast(1.2) blur(0); }
+        }
+        
+        @media (min-width: 769px) {
+            .timeline-item:hover .block-bg { 
+                opacity: 0.6; 
+                transform: scale(1.08); 
+                filter: grayscale(40%) contrast(1.15) brightness(1.1); 
+            }
+        .timeline-item:hover .block-container {
+            border-color: var(--primary); 
+            box-shadow: 0 0 30px rgba(255, 153, 51, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.1);
+            transform: scale(1.02);
+        }
+        }
+
+        .timeline-item.active .block-bg { 
+            opacity: 0.8; 
+            transform: scale(1.12); 
+            filter: grayscale(0%) contrast(1.25) brightness(1.15);
+        }
+        .timeline-item.active .block-container {
+            border-color: var(--primary); 
+            box-shadow: 0 0 40px rgba(255, 153, 51, 0.5), inset 0 0 20px rgba(255, 255, 255, 0.15);
+            background: rgba(255, 153, 51, 0.1) !important;
+            transform: scale(1.05);
+        }
+        
+        @media (min-width: 769px) { .timeline-item.active .block-container { transform: translateX(10px); } }
+        @media (max-width: 768px) { .timeline-item.active .block-container { transform: translateY(-5px); } }
+        
+        .timeline-item .year { font-family: 'Cinzel', serif; color: rgba(255,255,255,0.8); transition: color 0.3s ease; }
+        .timeline-item.active .year { color: var(--primary); text-shadow: 0 0 10px rgba(255,153,51,0.6); }
+        
+        @media (min-width: 769px) {
+            .timeline-item { margin-bottom: 1.5rem; min-height: 160px; }
+        }
+
+        /* Intro Screen */
+        #intro-screen {
+            position: fixed; inset: 0; background-color: #05050a;
+            background-image: linear-gradient(to bottom, rgba(5,5,10,0.6), rgba(5,5,10,0.95)), 
+                              url('https://images.wikimedia.org/wikipedia/commons/1/1b/Quit_India_Movement_1942.jpg');
+            background-size: cover; background-position: center; background-blend-mode: overlay;
+            background-attachment: fixed;
+            z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 1.5s ease, visibility 1.5s ease;
+        }
+        #intro-screen::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(circle at center, transparent 0%, #000 100%); pointer-events: none;
+        }
+        #intro-screen h1, #intro-screen p, #intro-screen button { position: relative; z-index: 2; }
+        
+        .glowing-btn {
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3); padding: 1rem 3rem;
+            font-family: 'Cinzel', serif; font-size: 1.2rem; letter-spacing: 2px;
+            transition: all 0.4s ease; position: relative; overflow: hidden; border-radius: 4px;
+        }
+        .glowing-btn::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 153, 51, 0.5), transparent); transition: all 0.6s ease;
+        }
+        .glowing-btn:hover::before { left: 100%; }
+        .glowing-btn:hover { border-color: var(--primary); box-shadow: 0 0 25px rgba(255, 153, 51, 0.5); text-shadow: 0 0 8px rgba(255,255,255,0.8); }
+
+        /* Audio Visualizer */
+        #audio-controls { display: flex; align-items: center; gap: 10px; opacity: 0.7; transition: opacity 0.3s ease; }
+        #audio-controls:hover { opacity: 1; }
+        .bars { display: flex; align-items: flex-end; height: 15px; gap: 2px; }
+        .bar { width: 3px; background: var(--primary); border-radius: 2px; animation: bounce 1s infinite alternate; }
+        .bar:nth-child(1) { height: 100%; animation-delay: 0.1s; }
+        .bar:nth-child(2) { height: 60%; animation-delay: 0.3s; }
+        .bar:nth-child(3) { height: 80%; animation-delay: 0.2s; }
+        .bar:nth-child(4) { height: 40%; animation-delay: 0.4s; }
+        @keyframes bounce { 0% { transform: scaleY(0.3); } 100% { transform: scaleY(1); } }
+        .paused .bar { animation-play-state: paused; transform: scaleY(0.2); }
+
+        .freedom-glow { animation: pulseGlow 4s infinite alternate; }
+        @keyframes pulseGlow {
+            0% { text-shadow: 0 0 10px rgba(255, 153, 51, 0.2), 0 0 20px rgba(255, 255, 255, 0.1), 0 0 30px rgba(19, 136, 8, 0.2); }
+            100% { text-shadow: 0 0 20px rgba(255, 153, 51, 0.6), 0 0 40px rgba(255, 255, 255, 0.4), 0 0 60px rgba(19, 136, 8, 0.6); }
+        }
+        
+        #drag-hint {
+            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+            display: flex; align-items: center; gap: 15px; opacity: 0.6;
+            animation: float 3s ease-in-out infinite; pointer-events: none; z-index: 5;
+        }
+        @media (max-width: 768px) { #drag-hint { bottom: 45vh; } } /* Position above bottom sheet on mobile */
+        @keyframes float { 0%, 100% { transform: translate(-50%, 0); } 50% { transform: translate(-50%, -15px); } }
+    </style>
+</head>
+<body>
+
+
+
+    <div id="film-overlay"></div>
+
+    <div id="intro-screen">
+        <h1 class="text-6xl md:text-8xl mb-6 text-center px-4 cinzel font-bold text-white tracking-widest" style="text-shadow: 0 0 30px rgba(0,0,0,0.8), 0 5px 15px rgba(0,0,0,1);">THE JOURNEY TO MIDNIGHT</h1>
+        <p class="text-gray-200 mb-10 tracking-widest uppercase text-base md:text-lg text-center max-w-2xl px-4 drop-shadow-lg font-medium">An interactive 3D chronicle of India's path to freedom.</p>
+        <button id="start-btn" class="glowing-btn mt-6 cursor-pointer">Experience History</button>
+        <p class="mt-14 text-sm text-gray-400 tracking-wider">Drag to rotate • Headphones recommended</p>
+    </div>
+
+    <div id="webgl-container"></div>
+    <div id="gradient-overlay"></div>
+    
+    <div id="drag-hint" class="hidden md:flex text-sm uppercase tracking-widest text-white drop-shadow-md bg-black/30 px-6 py-3 rounded-full border border-white/10 backdrop-blur-sm">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9c0-2.8 2.2-5 5-5h4c2.8 0 5 2.2 5 5v6c0 2.8-2.2 5-5 5H10c-2.8 0-5-2.2-5-5V9z"></path><path d="M12 17v-4"></path><path d="M12 9h.01"></path></svg>
+        <span>Drag to Explore</span>
+    </div>
+
+    <div id="ui-layer" class="p-8 md:p-12">
+        <header class="flex justify-between items-start pointer-events-auto w-full z-20 pb-8 md:pb-12">
+            <div>
+                <h1 class="text-4xl md:text-6xl font-bold tracking-wider cinzel transition-colors duration-1000 drop-shadow-lg" id="main-title">INDIA</h1>
+                <p class="text-sm md:text-lg text-gray-300 tracking-widest uppercase mt-3 drop-shadow-md font-semibold">1857 - 1947</p>
+            </div>
+            <div id="audio-controls" class="glass-panel px-4 py-2 rounded-full flex items-center shadow-lg cursor-pointer">
+                <span class="text-xs tracking-wider font-semibold mr-2 uppercase hidden md:inline">Audio</span>
+                <div class="bars" id="audio-bars">
+                    <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                </div>
+            </div>
+        </header>
+
+        <div class="flex flex-1 mt-8 md:mt-16 overflow-visible relative z-10 gap-12">
+            <div id="sidebar" class="glass-panel md:rounded-2xl md:p-8 flex flex-col z-20">
+                <h2 class="cinzel text-2xl md:text-3xl mb-6 border-b border-white/10 pb-6 hidden md:block text-white">Chronicles of Resistance</h2>
+                <div id="timeline-container" class="timeline-scroll flex-1 w-full">
+                    </div>
+            </div>
+
+            <div class="flex-1 flex flex-col justify-center items-center md:items-end mobile-spacer md:pb-12 md:pr-12 pointer-events-none relative md:relative z-10">
+                <div id=\"hero-event-display\" class=\"glass-panel rounded-xl overflow-hidden shadow-2xl border border-white/20 transition-all duration-500\">
+                    <div class=\"event-image-container\">
+                        <img id=\"hero-image\" src=\"\" alt=\"Historical Event\" loading=\"lazy\" decoding=\"async\" crossorigin=\"anonymous\"/>
+                        <h1 id="hero-year" class="cinzel text-6xl md:text-9xl font-bold text-white/30 absolute bottom-2 right-4 m-0 leading-none z-10"></h1>
+                    </div>
+                    <div class="p-8 md:p-12 relative z-20 bg-gradient-to-t from-[var(--glass-bg)] to-transparent">
+                        <h2 id="hero-title" class="cinzel text-2xl md:text-4xl font-bold text-white drop-shadow-lg mb-3 md:mb-4"></h2>
+                        <p id="hero-desc" class="text-sm md:text-lg text-gray-200 leading-relaxed drop-shadow-md font-medium"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA ARCHITECTURE (Wikimedia Public Domain Images) ---
+        const timelineEvents = [
+            { id: 'revolt', year: 1857, title: "First War of Independence", lat: 28.98, lon: 77.70, desc: "The Sepoy Mutiny erupts in Meerut, marking the first major widespread uprising against the British East India Company's rule.", color: '#ff3333', intensity: 0.2, image: 'https://images.wikimedia.org/wikipedia/commons/4/41/Mutiny_at_the_Cantonments_of_Meerut.jpg', fallback: 'linear-gradient(135deg, #ff3333 0%, #8b0000 100%)' },
+            { id: 'congress', year: 1885, title: "Birth of the INC", lat: 18.96, lon: 72.81, desc: "The Indian National Congress is formed in Bombay, establishing a formal platform for civic and political dialogue.", color: '#4488ff', intensity: 0.3, image: 'https://images.wikimedia.org/wikipedia/commons/d/d4/First_Session_of_Indian_National_Congress_Bombay_1885.jpg', fallback: 'linear-gradient(135deg, #4488ff 0%, #1a4d7a 100%)' },
+            { id: 'swadeshi', year: 1905, title: "Swadeshi Movement", lat: 22.57, lon: 88.36, desc: "Following the partition of Bengal, the nation unites in boycotting British goods and promoting indigenous self-reliance.", color: '#ffaa33', intensity: 0.4, image: 'https://images.wikimedia.org/wikipedia/commons/b/b8/Bande_Mataram.jpg', fallback: 'linear-gradient(135deg, #ffaa33 0%, #cc8800 100%)' },
+            { id: 'jallianwala', year: 1919, title: "Jallianwala Bagh", lat: 31.62, lon: 74.87, desc: "British troops open fire on an unarmed gathering in Amritsar. The brutality turns the demand for freedom into uncompromising resolve.", color: '#ff1111', intensity: 0.5, image: 'https://images.wikimedia.org/wikipedia/commons/2/23/Jallianwala_Bagh_bullet_marks.jpg', fallback: 'linear-gradient(135deg, #ff1111 0%, #8b0000 100%)' },
+            { id: 'dandi', year: 1930, title: "The Salt Satyagraha", lat: 20.87, lon: 72.95, desc: "Mahatma Gandhi leads the legendary 240-mile march to the Arabian Sea to defy the British salt tax.", color: '#ffffff', intensity: 0.6, image: 'https://images.wikimedia.org/wikipedia/commons/d/d1/Gandhi_during_the_Salt_March.jpg', fallback: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(200,200,200,0.9) 100%)' },
+            { id: 'quitindia', year: 1942, title: "Quit India Movement", lat: 18.96, lon: 72.81, desc: "Gandhi launches the 'Quit India' movement with the rallying cry 'Do or Die'. Mass protests erupt nationwide.", color: '#ff6600', intensity: 0.8, image: 'https://images.wikimedia.org/wikipedia/commons/1/1b/Quit_India_Movement_1942.jpg', fallback: 'linear-gradient(135deg, #ff6600 0%, #cc5500 100%)' },
+            { id: 'independence', year: 1947, title: "Midnight's Awakening", lat: 28.61, lon: 77.20, desc: "At the stroke of the midnight hour, when the world sleeps, India awakens to life and freedom.", color: '#138808', intensity: 1.0, isClimax: true, image: 'https://images.wikimedia.org/wikipedia/commons/1/18/Jawaharlal_Nehru_delivering_his_Tryst_with_Destiny_speech.jpg', fallback: 'linear-gradient(135deg, #FF9933 0%, #138808 50%, #FFFFFF 100%)' }
+        ];
+
+        // --- GENERATIVE AUDIO ---
+        class AudioEngine {
+            constructor() { this.ctx = null; this.isPlaying = false; this.masterGain = null; }
+            init() {
+                if (this.ctx) return;
+                this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                this.masterGain = this.ctx.createGain(); this.masterGain.gain.value = 0;
+                const compressor = this.ctx.createDynamicsCompressor();
+                this.masterGain.connect(compressor); compressor.connect(this.ctx.destination);
+                this.createDrone(); this.isPlaying = true;
+                this.masterGain.gain.setTargetAtTime(0.6, this.ctx.currentTime, 1);
+            }
+            createDrone() {
+                const osc1 = this.ctx.createOscillator(); osc1.type = 'sine'; osc1.frequency.value = 55;
+                const osc2 = this.ctx.createOscillator(); osc2.type = 'triangle'; osc2.frequency.value = 55 * 1.5;
+                const lfo = this.ctx.createOscillator(); lfo.type = 'sine'; lfo.frequency.value = 0.05;
+                const filter = this.ctx.createBiquadFilter(); filter.type = 'lowpass'; filter.Q.value = 2; filter.frequency.value = 300;
+                const lfoGain = this.ctx.createGain(); lfoGain.gain.value = 400;
+                lfo.connect(lfoGain); lfoGain.connect(filter.frequency);
+                const mixGain = this.ctx.createGain(); mixGain.gain.value = 0.5;
+                osc1.connect(filter); osc2.connect(filter); filter.connect(mixGain); mixGain.connect(this.masterGain);
+                osc1.start(); osc2.start(); lfo.start(); this.filterNode = filter;
+            }
+            setIntensity(val) {
+                if(!this.ctx) return;
+                this.filterNode.frequency.setTargetAtTime(300 + (val * 1500), this.ctx.currentTime, 2);
+            }
+            triggerBell() {
+                if(!this.ctx) return;
+                const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain(); const filter = this.ctx.createBiquadFilter();
+                osc.frequency.setValueAtTime(440 * (Math.random() > 0.5 ? 1 : 1.5), this.ctx.currentTime);
+                filter.type = 'bandpass'; filter.frequency.value = osc.frequency.value; filter.Q.value = 10;
+                gain.gain.setValueAtTime(0, this.ctx.currentTime); gain.gain.linearRampToValueAtTime(0.3, this.ctx.currentTime + 0.1); gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 4);
+                osc.connect(filter); filter.connect(gain); gain.connect(this.masterGain);
+                osc.start(); osc.stop(this.ctx.currentTime + 4.1);
+            }
+            toggle() {
+                if(!this.ctx) return;
+                if(this.ctx.state === 'running') { this.ctx.suspend(); this.isPlaying = false; } 
+                else { this.ctx.resume(); this.isPlaying = true; }
+                return this.isPlaying;
+            }
+        }
+        const audio = new AudioEngine();
+
+        // --- THREE.JS ENGINE ---
+        let scene, camera, renderer, globeGroup, markersGroup, pathGroup, earthMesh, atmosphereMesh, dustParticles, starField;
+        let controls, targetRotation = { x: 0, y: 0 }, currentRotation = { x: 0, y: 0 }, globeRadius = 5, isAutoRotating = true;
+
+        function initThreeJS() {
+            const container = document.getElementById('webgl-container');
+            scene = new THREE.Scene(); scene.fog = new THREE.FogExp2(0x05050a, 0.04);
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(window.innerWidth < 768 ? 0 : 7, 2, window.innerWidth < 768 ? 26 : 17);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); // Optimized for mobile
+            container.appendChild(renderer.domElement);
+
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true; controls.dampingFactor = 0.05; controls.enablePan = false;
+            controls.minDistance = 10; controls.maxDistance = 30; controls.minPolarAngle = Math.PI/4; controls.maxPolarAngle = Math.PI/1.5;
+            controls.addEventListener('start', () => { isAutoRotating = false; });
+
+            globeGroup = new THREE.Group(); 
+            // Crucial Mobile Fix: Shift globe UP so it sits above the bottom sheet on small screens
+            globeGroup.position.y = window.innerWidth < 768 ? 3 : 0; 
+            scene.add(globeGroup);
+
+            createHolographicEarth(); createMarkers(); createJourneyPath(); createStarfield(); createDustParticles();
+
+            scene.add(new THREE.AmbientLight(0xffffff, 0.3));
+            const pLight = new THREE.PointLight(0xffcc88, 1.5, 50); pLight.position.set(15, 10, 15); scene.add(pLight);
+            const bLight = new THREE.PointLight(0x2288ff, 1, 50); bLight.position.set(-15, -10, -15); scene.add(bLight);
+
+            window.addEventListener('resize', onWindowResize, false);
+            animate();
+        }
+
+        function createStarfield() {
+            const starsGeo = new THREE.BufferGeometry();
+            const starsMat = new THREE.PointsMaterial({color: 0xffffff, size: 0.08, transparent: true, opacity: 0.8, sizeAttenuation: true});
+            const starsVerts = [];
+            for(let i=0; i<4000; i++) {
+                const x = (Math.random() - 0.5) * 150, y = (Math.random() - 0.5) * 150, z = (Math.random() - 0.5) * 150;
+                if(Math.sqrt(x*x + y*y + z*z) > globeRadius + 3) starsVerts.push(x, y, z);
+            }
+            starsGeo.setAttribute('position', new THREE.Float32BufferAttribute(starsVerts, 3));
+            starField = new THREE.Points(starsGeo, starsMat); scene.add(starField);
+        }
+
+        function createDustParticles() {
+            const dustGeo = new THREE.BufferGeometry();
+            const dustMat = new THREE.PointsMaterial({color: 0xffaa55, size: 0.05, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending});
+            const dustVerts = [];
+            for(let i=0; i<800; i++) {
+                const r = globeRadius + Math.random() * 4;
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos((Math.random() * 2) - 1);
+                dustVerts.push(r * Math.sin(phi) * Math.cos(theta), r * Math.sin(phi) * Math.sin(theta), r * Math.cos(phi));
+            }
+            dustGeo.setAttribute('position', new THREE.Float32BufferAttribute(dustVerts, 3));
+            dustParticles = new THREE.Points(dustGeo, dustMat);
+            globeGroup.add(dustParticles);
+        }
+
+        function createHolographicEarth() {
+            const tl = new THREE.TextureLoader();
+            const earthTex = tl.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_atmos_2048.jpg');
+            const bumpTex = tl.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_normal_2048.jpg');
+            const specTex = tl.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_specular_2048.jpg');
+            
+            const earthMat = new THREE.MeshPhongMaterial({
+                map: earthTex, bumpMap: bumpTex, bumpScale: 0.05, specularMap: specTex, specular: new THREE.Color('grey'),
+                color: 0xaaccff, emissive: 0x051020, emissiveIntensity: 0.2, transparent: true, opacity: 0.95
+            });
+            earthMesh = new THREE.Mesh(new THREE.SphereGeometry(globeRadius * 0.99, 64, 64), earthMat);
+            globeGroup.add(earthMesh);
+
+            const atmosMat = new THREE.MeshPhongMaterial({
+                color: 0x000000, emissive: 0x113355, transparent: true, opacity: 0.35, side: THREE.BackSide, blending: THREE.AdditiveBlending
+            });
+            atmosphereMesh = new THREE.Mesh(new THREE.SphereGeometry(globeRadius * 1.05, 64, 64), atmosMat);
+            globeGroup.add(atmosphereMesh);
+        }
+
+        function getCoordinatesVector(lat, lon, r) {
+            const phi = (90 - lat)*(Math.PI/180), theta = (lon + 180)*(Math.PI/180);
+            return new THREE.Vector3(-(r * Math.sin(phi) * Math.cos(theta)), r * Math.cos(phi), r * Math.sin(phi) * Math.sin(theta));
+        }
+
+        function createMarkers() {
+            markersGroup = new THREE.Group(); globeGroup.add(markersGroup);
+            const markerGeo = new THREE.SphereGeometry(0.12, 16, 16), ringGeo = new THREE.RingGeometry(0.15, 0.25, 32);
+            timelineEvents.forEach((ev, i) => {
+                const pos = getCoordinatesVector(ev.lat, ev.lon, globeRadius);
+                const marker = new THREE.Mesh(markerGeo, new THREE.MeshBasicMaterial({ color: ev.color })); marker.position.copy(pos);
+                const ring = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({color: ev.color, transparent: true, opacity: 0.4, side: THREE.DoubleSide, blending: THREE.AdditiveBlending}));
+                ring.position.copy(pos); ring.lookAt(new THREE.Vector3(0,0,0)); 
+                const pin = new THREE.Group(); pin.add(marker); pin.add(ring); pin.userData = { index: i };
+                markersGroup.add(pin);
+            });
+        }
+
+        function createJourneyPath() {
+            pathGroup = new THREE.Group(); globeGroup.add(pathGroup);
+            const points = timelineEvents.map(ev => getCoordinatesVector(ev.lat, ev.lon, globeRadius + 0.1));
+            const pathMesh = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points), 64, 0.03, 8, false), 
+                             new THREE.MeshBasicMaterial({color: 0xffaa33, transparent: true, opacity: 0.3, blending: THREE.AdditiveBlending}));
+            pathGroup.add(pathMesh);
+        }
+
+        function lookAtCoordinates(lat, lon) {
+            isAutoRotating = true; 
+            targetRotation.x = lat * (Math.PI/180); 
+            targetRotation.y = -lon * (Math.PI/180) + Math.PI/2;
+        }
+
+        function lookAtIndia() {
+            // Center of India: approximately 20.5°N, 78.9°E
+            lookAtCoordinates(20.5, 78.9);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            camera.position.set(window.innerWidth < 768 ? 0 : 7, 2, window.innerWidth < 768 ? 26 : 17);
+            globeGroup.position.y = window.innerWidth < 768 ? 3 : 0; 
+        }
+
+        const clock = new THREE.Clock(); let activeEventIndex = 0;
+
+        function animate() {
+            requestAnimationFrame(animate); const time = clock.getElapsedTime();
+            if (isAutoRotating) {
+                currentRotation.x += (targetRotation.x - currentRotation.x)*0.05; currentRotation.y += (targetRotation.y - currentRotation.y)*0.05;
+                globeGroup.rotation.set(currentRotation.x, currentRotation.y, 0, 'YXZ');
+            } else { targetRotation.x = globeGroup.rotation.x; targetRotation.y = globeGroup.rotation.y; }
+
+            markersGroup?.children.forEach(c => {
+                const focus = c.userData.index === activeEventIndex, pulse = focus ? Math.sin(time*4)*0.3 : 0, s = (focus?1.5:1)+pulse;
+                c.scale.set(s,s,s); c.children[1].material.opacity = focus ? 0.8+(pulse*0.5) : 0.3;
+            });
+            
+            if(dustParticles) dustParticles.rotation.y += 0.0005; 
+            if(starField) starField.rotation.y += 0.0001; 
+            scene.rotation.y += 0.0002;
+            controls.update(); renderer.render(scene, camera);
+        }
+
+        // --- UI LOGIC ---
+        function buildTimeline() {
+            const tc = document.getElementById('timeline-container');
+            timelineEvents.forEach((ev, i) => {
+                const item = document.createElement('div'); item.className = 'timeline-item p-1 md:mb-6 cursor-pointer shrink-0 md:shrink'; item.dataset.index = i;
+                const bgStyle = `background: url('${ev.image}') center/cover, ${ev.fallback};`;
+                item.innerHTML = `
+                    <div class="block-container relative overflow-hidden rounded-xl bg-black/80 w-full h-full md:h-auto min-h-[120px] md:min-h-0 border">
+                        <div class="block-bg absolute inset-0 w-full h-full opacity-40 mix-blend-screen" style="${bgStyle}"></div>
+                        <img src="${ev.image}" class="block-bg-img hidden" alt="${ev.title}" onload="this.previousElementSibling.style.backgroundImage='url(${ev.image})'; this.previousElementSibling.style.opacity='0.4';" onerror="this.style.display='none'; this.previousElementSibling.style.background='${ev.fallback}';">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-transparent"></div>
+                        <div class="relative p-4 md:p-6 z-10 flex flex-col justify-end h-full">
+                            <div class="year text-2xl md:text-3xl font-bold mb-2 drop-shadow-lg">${ev.year}</div>
+                            <div class="text-white font-bold mb-2 text-sm md:text-lg drop-shadow-md leading-tight">${ev.title}</div>
+                            <div class="text-xs md:text-sm text-gray-300 leading-relaxed hidden md:block drop-shadow-md">${ev.desc.substring(0, 75)}...</div>
+                        </div>
+                    </div>`;
+                item.addEventListener('click', () => selectEvent(i)); tc.appendChild(item);
+            });
+        }
+
+        function selectEvent(idx) {
+            activeEventIndex = idx; const ev = timelineEvents[idx];
+            
+            // Update active timeline item visually
+            document.querySelectorAll('.timeline-item').forEach(el => el.classList.remove('active'));
+            const aItem = document.querySelector(`.timeline-item[data-index="${idx}"]`);
+            if(aItem) {
+                aItem.classList.add('active');
+                if(window.innerWidth < 768) aItem.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
+                else aItem.scrollIntoView({behavior:'smooth',block:'center'});
+            }
+            
+            // Rotate globe to event location
+            lookAtCoordinates(ev.lat, ev.lon);
+            
+            // Update gradient overlay color
+            document.getElementById('gradient-overlay').style.background = `radial-gradient(circle at center, transparent 0%, ${ev.color}25 60%, rgba(5,5,10,0.95) 100%)`;
+            atmosphereMesh.material.emissive = new THREE.Color(ev.color).multiplyScalar(0.4);
+            if(dustParticles) dustParticles.material.color = new THREE.Color(ev.color); 
+            
+            // Update title and earth appearance
+            const mt = document.getElementById('main-title');
+            const heroImgContainer = document.querySelector('.event-image-container');
+            heroImgContainer.style.background = ev.fallback;
+            
+            if(ev.isClimax) {
+                earthMesh.material.color.setHex(0xffffff); atmosphereMesh.material.emissive.setHex(0xFF9933);
+                mt.innerHTML = `<span class="text-[#FF9933]">IND</span><span class="text-white">I</span><span class="text-[#138808]">A</span>`; mt.classList.add('freedom-glow');
+                pathGroup.children[0].material.color.setHex(0xffffff); pathGroup.children[0].material.opacity = 0.8;
+                if(dustParticles) dustParticles.material.color = new THREE.Color(0xFF9933);
+            } else {
+                earthMesh.material.color.setHex(0xaaccff); mt.innerHTML = `INDIA`; mt.classList.remove('freedom-glow');
+                pathGroup.children[0].material.color.setHex(0xffaa33); pathGroup.children[0].material.opacity = 0.3;
+            }
+            
+            // Update hero event display with smooth transition
+            const hd = document.getElementById('hero-event-display'); 
+            hd.classList.remove('visible');
+            
+            setTimeout(() => { 
+                document.getElementById('hero-year').innerText = ev.year; 
+                document.getElementById('hero-title').innerText = ev.title;
+                document.getElementById('hero-desc').innerText = ev.desc; 
+                
+                const heroImg = document.getElementById('hero-image');
+                heroImg.src = ev.image;
+                heroImg.onerror = () => { heroImg.style.display = 'none'; const container = heroImg.parentElement; container.style.background = ev.fallback; container.style.backgroundSize = 'cover'; };
+                
+                hd.classList.add('visible'); 
+            }, 300);
+            
+            // Trigger audio feedback
+            audio.triggerBell(); 
+            audio.setIntensity(ev.intensity);
+        }
+
+        // --- INIT ---
+        document.getElementById('start-btn').addEventListener('click', () => {
+            const intro = document.getElementById('intro-screen'); intro.style.opacity = 0;
+            setTimeout(() => {
+                intro.style.display = 'none';
+                const dh = document.getElementById('drag-hint'); dh.classList.remove('hidden'); 
+                setTimeout(()=>dh.style.opacity=0, 5000); 
+            }, 1500);
+            audio.init(); initThreeJS(); buildTimeline(); preloadImages(); 
+            // Focus on India by default, then select first event
+            setTimeout(() => { lookAtIndia(); }, 500);
+            setTimeout(() => selectEvent(0), 1500);
+        });
+
+        // Preload images for better performance
+        function preloadImages() {
+            timelineEvents.forEach(ev => {
+                const img = new Image();
+                img.src = ev.image;
+                img.onerror = () => console.log(`Failed to load: ${ev.image}, using fallback`);
+            });
+        }
+
+        const ac = document.getElementById('audio-controls');
+        ac.addEventListener('click', () => { if(audio.toggle()) ac.classList.remove('paused'); else ac.classList.add('paused'); });
+    </script>
+</body>
+</html>
