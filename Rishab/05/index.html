@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COBALT_OS_TERMINAL_V10</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="booting">
+    <!-- Post-Processing Effects -->
+    <div class="crt-distortion"></div>
+    <div class="scanline-layer"></div>
+    <div class="noise-base"></div>
+    <div class="glow-edge"></div>
+
+    <div id="wrapper">
+        <header id="sys-header">
+            <div class="h-left">
+                <span class="blink-fast">●</span> SIGNAL_STRENGTH: <span id="sig-val">ERR</span>
+                <span class="sep">|</span> NODE: <span id="node-id">0xFB22A</span>
+            </div>
+            <div class="h-mid">PROJECT_COBALT_INTEL</div>
+            <div class="h-right" id="clock">00:00:00</div>
+        </header>
+
+        <main id="terminal-interface">
+            <div id="output-buffer">
+                <!-- Systems inject text here -->
+            </div>
+            <div class="input-line">
+                <span id="prompt-label">SYSTEM@COBALT:~$</span>
+                <input type="text" id="terminal-input" autofocus autocomplete="off" spellcheck="false" maxlength="128">
+            </div>
+        </main>
+
+        <nav id="footer-actions">
+            <div class="btn-group">
+                <button class="os-btn" id="audio-init">SYNT_AUDIO: OFF</button>
+                <button class="os-btn" id="glitch-trigger">RECALIBRATE</button>
+                <button class="os-btn" id="visual-mode">THEME: CYAN_VOID</button>
+            </div>
+            <div class="disk-activity">
+                DISK_IO: <span id="disk-led">READY</span>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Background Matrix / Code Rain Canvas -->
+    <canvas id="matrix-bg"></canvas>
+
+    <!-- CRT Filter SVG -->
+    <svg style="display:none;">
+        <defs>
+            <filter id="crtText">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="0.4" result="blur" />
+                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 15 -7" result="glow" />
+                <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+        </defs>
+    </svg>
+
+    <script src="script.js"></script>
+</body>
+</html>
